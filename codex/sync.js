@@ -24,28 +24,26 @@ function style(){ const s = document.createElement("style"); s.textContent = css
 function toast(m){ const t = document.createElement("div"); t.className = "az-toast"; t.textContent = m; document.body.appendChild(t); setTimeout(()=>t.remove(), 2600); }
 function sheet(html){ const w = document.createElement("div"); w.className = "az-sheet"; w.innerHTML = '<div class="az-in">'+html+'</div>'; document.body.appendChild(w); return w; }
 
-// ---------- sign in with a 6-digit email code (home-screen apps can't follow email links) ----------
+// ---------- sign in with email + password (no email links needed for home-screen apps) ----------
 function signInFlow(){
- const w = sheet('<h3>Sync your progress</h3><p>Sign in once with your email. Your data stays in your own private database and follows you between devices.</p>'+
-  '<input type="email" id="azEmail" placeholder="you@example.com" autocomplete="email" inputmode="email"><div class="az-err" id="azErr"></div>'+
-  '<div class="az-row"><button class="az-no" id="azLater">Not now</button><button class="az-go" id="azSend">Send code</button></div>');
+ const w = sheet('<h3>Sync your progress</h3><p>Use the same email and password in both apps. First time? Pick a password and tap <b>Create account</b>.</p>'+
+  '<input type="email" id="azEmail" placeholder="you@example.com" autocomplete="email" inputmode="email">'+
+  '<input type="password" id="azPass" placeholder="Password (8+ characters)" autocomplete="current-password" style="margin-top:8px"><div class="az-err" id="azErr"></div>'+
+  '<div class="az-row"><button class="az-no" id="azLater">Not now</button><button class="az-no" id="azNew">Create account</button><button class="az-go" id="azIn">Sign in</button></div>');
  const err = m => { w.querySelector("#azErr").textContent = m || ""; };
+ const vals = () => { const email = w.querySelector("#azEmail").value.trim(), password = w.querySelector("#azPass").value;
+  if(!/^\S+@\S+\.\S+$/.test(email)){ err("Enter a valid email."); return null; }
+  if(password.length < 8){ err("Password needs at least 8 characters."); return null; } return {email, password}; };
  w.querySelector("#azLater").onclick = () => { try{ localStorage.setItem("az-later-"+P, String(Date.now())); }catch(e){} w.remove(); pill(); };
- w.querySelector("#azSend").onclick = async () => {
-  const email = w.querySelector("#azEmail").value.trim(); if(!/^\S+@\S+\.\S+$/.test(email)) return err("Enter a valid email.");
-  err("Sending…"); const r = await client.auth.signInWithOtp({email, options:{shouldCreateUser:true}});
+ w.querySelector("#azIn").onclick = async () => { const c = vals(); if(!c) return; err("Signing in…");
+  const r = await client.auth.signInWithPassword(c);
+  if(r.error) return err(/confirm/i.test(r.error.message) ? "Confirm your email first (tap the link Supabase sent), then sign in." : r.error.message);
+  location.reload(); };
+ w.querySelector("#azNew").onclick = async () => { const c = vals(); if(!c) return; err("Creating account…");
+  const r = await client.auth.signUp(c);
   if(r.error) return err(r.error.message);
-  w.querySelector(".az-in").innerHTML = '<h3>Check your email</h3><p>Type the 6-digit code from the email sent to '+email.replace(/</g,"")+'.</p>'+
-   '<input id="azCode" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456"><div class="az-err" id="azErr"></div>'+
-   '<div class="az-row"><button class="az-no" id="azBack">Back</button><button class="az-go" id="azVerify">Sign in</button></div>';
-  w.querySelector("#azBack").onclick = () => { w.remove(); signInFlow(); };
-  w.querySelector("#azVerify").onclick = async () => {
-   const token = w.querySelector("#azCode").value.trim(); w.querySelector("#azErr").textContent = "Checking…";
-   const v = await client.auth.verifyOtp({email, token, type:"email"});
-   if(v.error){ w.querySelector("#azErr").textContent = v.error.message; return; }
-   location.reload();
-  };
- };
+  if(r.data && r.data.session) return location.reload();
+  err("Almost there: tap the confirmation link Supabase emailed you, then come back and tap Sign in."); };
 }
 function pill(){ if(document.querySelector(".az-pill")) return; const b = document.createElement("button"); b.className = "az-pill"; b.textContent = "☁ Sign in to sync"; b.onclick = () => { b.remove(); signInFlow(); }; document.body.appendChild(b); }
 
