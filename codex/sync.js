@@ -19,6 +19,7 @@ const css = `.az-sheet{position:fixed;inset:0;z-index:99;background:rgba(6,10,10
 .az-row{display:flex;gap:8px;margin-top:12px}.az-row button{flex:1;font:700 15px system-ui;padding:12px;border-radius:999px;border:none;cursor:pointer}
 .az-go{background:#2c8a6c;color:#fff}.az-no{background:#9aa59c33;color:inherit}.az-err{color:#c2412e;font-size:13px;min-height:1.2em;margin-top:6px}
 .az-pill{position:fixed;right:10px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:60;font:700 12px system-ui;padding:7px 11px;border-radius:999px;border:none;background:#2c8a6c;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.az-cloud{padding:6px 10px;font-size:15px;opacity:.85}
 .az-toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:100;background:#13201d;color:#eaf5ef;padding:9px 14px;border-radius:12px;font:600 14px system-ui;box-shadow:0 6px 20px rgba(0,0,0,.35)}`;
 function style(){ const s = document.createElement("style"); s.textContent = css; document.head.appendChild(s); }
 function toast(m){ const t = document.createElement("div"); t.className = "az-toast"; t.textContent = m; document.body.appendChild(t); setTimeout(()=>t.remove(), 2600); }
@@ -123,7 +124,7 @@ async function loadPriv(){
 }
 // tap the sync status line for: paste an update, or sign out
 document.addEventListener("click", e => {
- if(!client || !e.target.closest || !e.target.closest("#sync")) return;
+ if(!client || !e.target.closest || !e.target.closest("#sync, .az-cloud")) return;
  const w = sheet('<h3>Sync</h3><p>Paste an update Claude gave you, or sign out of this device.</p><textarea id="azUp" placeholder="Paste update (optional)"></textarea><div class="az-err" id="azErr"></div>'+
   '<div class="az-row"><button class="az-no" id="azOut">Sign out</button><button class="az-no" id="azX">Close</button><button class="az-go" id="azApply">Apply</button></div>');
  w.querySelector("#azX").onclick = () => w.remove();
@@ -154,6 +155,7 @@ async function boot(){
  await maybeImport();
  runApp(await loadPriv());
  readyFn(makeDb());
+ const c = document.createElement("button"); c.className = "az-pill az-cloud"; c.textContent = "☁"; c.setAttribute("aria-label","Sync settings"); document.body.appendChild(c);
 }
 if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 // keep the installed app fresh: register the offline cache
