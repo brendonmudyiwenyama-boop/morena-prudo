@@ -7,9 +7,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<script src="config.js?v=202611191918"></script>
+<script src="config.js?v=202611201059"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="sync.js?v=202611191918"></script>
+<script src="sync.js?v=202611201059"></script>
 <meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}/* no sideways drift */html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}.aura{overflow:hidden}.heat{overflow:hidden}
 </style></head><body>
 <title>Ascension Log</title>
@@ -207,6 +207,7 @@ body.locked .chk svg{display:none}
 .greet.land .g-head{animation:gLand .35s ease-out}
 .greet.wink .g-head{animation:gWink .45s ease-out}
 .greet.hit .g-head{animation:gHit .5s ease-out}
+.greet.droop .g-head{transform:translateY(5px) rotate(-3deg);transition:transform .6s ease;filter:saturate(.85)}
 @keyframes gInL{from{transform:translateX(-140px) rotate(-20deg)}to{transform:none}}
 @keyframes gInT{0%{transform:translateY(-200px) rotate(180deg)}55%{transform:translateY(6px) rotate(180deg)}100%{transform:none}}
 @keyframes gOutL{to{transform:translateX(-160px) rotate(-25deg);opacity:0}}
@@ -1745,7 +1746,7 @@ function skDispel(v, dir){
 
 // ---------- greeter (your avatar) ----------
 const AV = i => "avatar/b"+i+".webp";
-for(let i=0;i<8;i++){ const im=new Image(); im.src=AV(i); }
+for(let i=0;i<16;i++){ const im=new Image(); im.src=AV(i); }
 const wait = ms => new Promise(r=>setTimeout(r,ms));
 let greeting=false, greetSkip=false;
 function greetLines(){
@@ -1783,6 +1784,52 @@ async function say(g,txt,ms){
  blinkT=setInterval(()=>{ if(img.src.endsWith("b0.webp")){ img.src=AV(3); setTimeout(()=>{ if(img.src.endsWith("b3.webp")) img.src=AV(0); },130); } },1400);
  await wait(ms); clearInterval(blinkT); g.classList.remove("chat");
 }
+
+// ---------- how the avatar reads your day ----------
+const EXP = {proud:8, disappointed:9, heartbroken:10, worried:11, determined:12, overjoyed:13, annoyed:14, tiredproud:15, hype:4, yawn:5, facepalm:6, smug:7};
+const SAD = {disappointed:1, heartbroken:1, worried:1, annoyed:1, yawn:1, facepalm:1};
+function prevActive(d){ let y=add(d,-1); while(y>=START && pauseOf(y)) y=add(y,-1); return y>=START ? y : null; }
+function dayPct(d){ const c=checkable(d), D=days[d]||{}; if(!c.length) return 0; return c.filter(t=>D.checks&&D.checks[t.id]).length/c.length; }
+function perf(){
+ const T=today()<START?START:today(), h=new Date().getHours(), st=streak(), Y=prevActive(T), bf=buffer();
+ const pT=dayPct(T), xT=dayXP(T), pY=Y?dayPct(Y):null, xY=Y?dayXP(Y):0, cY=!!(Y&&cleared(Y));
+ const red=(days[T]||{}).gear==="red", redY=!!(Y&&(days[Y]||{}).gear==="red");
+ const pc=v=>Math.round(v*100)+"%", hr=(h%12||12)+(h<12?"am":"pm");
+ const R=(m,l)=>({mood:m, line:l[Math.floor(Math.random()*l.length)], big:m==="overjoyed"});
+ if(cleared(T)) return R("overjoyed",["Day cleared already?! Legend.","Every box ticked. I'm actually emotional.","Cleared! The dragon is FED."]);
+ if(pT>=.6) return R("proud",[pc(pT)+" done today. Keep that pace.","Look at that board. "+pc(pT)+" and climbing.","Proud of you. Now finish it."]);
+ if(h>=18 && xT===0) return R("worried",["It's "+hr+" and the board's empty. One block. Please.","Zero XP and the sun's going down…","Clock's ticking. Even the floor counts."]);
+ if(h>=13 && pT<.25) return R("annoyed",["It's "+hr+" and we're at "+pc(pT)+". Hmm.","Afternoon already. The board's still waiting.","I'm not mad. I'm just… watching."]);
+ if(st.warn && Y && xY===0) return R("heartbroken",["Yesterday was a zero. Today we fix it.","No XP yesterday… it's okay. Start small.","Streak's gone. Let's build a new one."]);
+ if(st.warn) return R("worried",["Yesterday didn't count. Today has to.","Streak's on the line. Floor first.","We need XP today. No pressure. (Pressure.)"]);
+ if(red) return R("yawn",["Floor day. Three tiny wins, then we nap.","Low battery mode. Still counts.","Yawn… okay. Duolingo, 100 words, 1 page."]);
+ if(cY && redY) return R("tiredproud",["Cleared yesterday on a low-energy day. Respect.","Tired AND cleared? That's discipline."]);
+ if(cY) return R(st.n>=7?"overjoyed":"hype",["Day cleared yesterday. Again!","Every box yesterday. We're SO back.","Yesterday: cleared. Today: same energy."].concat(st.n>=3?["Streak at "+st.n+". Untouchable."]:[]));
+ if(pY!==null && pY>=.7) return R("proud",["Yesterday hit "+pc(pY)+". Solid.","Strong day yesterday. Let's top it."]);
+ if(bf>=12 && pY!==null && pY>=.35 && Math.random()<.5) return R("smug",[bf+" chapters banked. I'm basically a publisher.","Buffer's thick. Readers are fed."]);
+ if(pY!==null && pY>=.35) return R("determined",["Yesterday was "+pc(pY)+". Today we beat it.","Decent yesterday. Let's go further.","Middle of the road yesterday. Not today."]);
+ if(Y && xY>0) return R("disappointed",["Only "+pc(pY)+" yesterday… we can do better.","Yesterday was light. Let's make up for it.","Rough one yesterday. New day though."]);
+ if(Y) return R("heartbroken",["Zero yesterday… I missed you. Let's go.","Yesterday got away from us. Not today."]);
+ return R("determined",["Fresh day. Let's set the tone.","New board. Let's fill it."]);
+}
+async function react(g,pf,set,headPt,sk){
+ set(EXP[pf.mood]); const hp=headPt();
+ if(!SAD[pf.mood]){ fxSpawn(pf.big||pf.mood==="hype"?50:18,hp.x,hp.y,{spread:Math.PI*2,speed:pf.big?3.6:2.2,life:50,size:2.2,grav:.06,hue:pf.big?Math.random()*360:45}); if(pf.big||pf.mood==="hype") g.classList.add("giggle"); }
+ else g.classList.add("droop");
+ await say(g,pf.line,greetSkip?0:2400); g.classList.remove("giggle");
+ await sk(300);
+}
+// quick pop-ins while you work today
+async function cameo(mood,line){
+ if(greeting || RM) return; greeting=true; greetSkip=false;
+ const g=document.getElementById("greet"), img=document.getElementById("gImg");
+ try{ img.src=AV(EXP[mood]); g.className="greet"; g.hidden=false; g.classList.add("in-left"); await wait(600); g.classList.remove("in-left"); g.classList.add("land");
+  const r=document.getElementById("gHead").getBoundingClientRect(); if(!SAD[mood]) fxSpawn(mood==="overjoyed"?44:14,r.left+r.width/2,r.top+r.height/2,{spread:Math.PI*2,speed:mood==="overjoyed"?3.4:2,life:45,size:2.2,grav:.06,hue:mood==="overjoyed"?Math.random()*360:45});
+  await wait(300); g.classList.remove("land"); if(mood==="overjoyed") g.classList.add("giggle");
+  await say(g,line,1800); g.classList.remove("giggle","talk"); g.classList.add("out-left"); await wait(460);
+ } finally { clearInterval(blinkT); g.hidden=true; g.className="greet"; img.src=AV(0); greeting=false; }
+}
+window.__av={perf:()=>perf(),cameo:(m,l)=>cameo(m,l),st:()=>({greeting,RM})};
 async function greet(){
  if(greeting) return; greeting=true; greetSkip=false;
  const g=document.getElementById("greet"), img=document.getElementById("gImg");
@@ -1791,16 +1838,15 @@ async function greet(){
  reset(); g.hidden=false;
  const gags=["plain","plain","singed","peek","rocket","double"]; let gag=RM?"plain":gags[Math.floor(Math.random()*gags.length)];
  const T=today()<START?START:today(), stx=streak(), DD=days[T]||{}, bf=buffer(), yday=add(T,-1);
- let mood=null;
- if(!isLocked()){ if(stx.warn) mood="facepalm"; else if(DD.gear==="red") mood="yawn"; else if(bf>=12) mood="smug"; else if(cleared(yday)||stx.n>=3) mood="hype"; }
- if(mood && (Math.random()<.65)) gag=mood;
+ const pf = (isLocked()||pauseOf(today())) ? null : perf();
+ if(pf) gag = SAD[pf.mood] ? "slow" : "plain";
  if(isLocked() && Math.random()<.3) gag=["hype","smug"][Math.floor(Math.random()*2)];
  const sk=async ms=>{ if(!greetSkip) await wait(ms); };
  const headPt=()=>{ const r=document.getElementById("gHead").getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2,top:r.top}; };
  try{
   if(gag==="peek"){ g.classList.add("in-top"); await sk(950); }
   else if(gag==="double"){ set(2); g.classList.add("peek"); await sk(750); g.classList.remove("peek"); set(0); await sk(250); g.classList.add("in-left"); await sk(600); await say(g,doubleTakeLine(),greetSkip?0:2000); }
-  else if(gag==="yawn"){ g.classList.add("in-slow"); await sk(1100); }
+  else if(gag==="yawn"||gag==="slow"){ g.classList.add("in-slow"); await sk(1100); }
   else { g.classList.add("in-left"); await sk(600); }
   g.classList.remove("in-left","in-top","in-slow"); g.classList.add("land"); { const hp=headPt(); fxSpawn(12,hp.x,hp.y+40,{dir:-Math.PI/2,spread:2.2,speed:1.4,life:28,size:1.6,grav:.04,hue:45}); } await sk(350); g.classList.remove("land");
   const moodLines={
@@ -1809,11 +1855,12 @@ async function greet(){
    facepalm:["We don't talk about yesterday. Floor. Now.","Streak's at zero. Today we start a new one.","Okay. Reset. One block. Go."],
    smug:[bf+" chapters banked. I'm basically a publisher.","Buffer's thick. Readers are fed.","Ahead of schedule? Couldn't be me. Oh wait."]
   };
-  if(gag==="hype"){ set(4); const hp=headPt(); fxSpawn(50,hp.x,hp.y,{spread:Math.PI*2,speed:3.6,life:55,size:2.4,grav:.06,hue:Math.random()*360}); g.classList.add("giggle"); await say(g,(moodLines.hype)[Math.floor(Math.random()*4)],greetSkip?0:2200); g.classList.remove("giggle"); set(0); }
+  if(pf){ await react(g,pf,set,headPt,sk); }
+  else if(gag==="hype"){ set(4); const hp=headPt(); fxSpawn(50,hp.x,hp.y,{spread:Math.PI*2,speed:3.6,life:55,size:2.4,grav:.06,hue:Math.random()*360}); g.classList.add("giggle"); await say(g,(moodLines.hype)[Math.floor(Math.random()*4)],greetSkip?0:2200); g.classList.remove("giggle"); set(0); }
   else if(gag==="yawn"){ set(5); await say(g,moodLines.yawn[Math.floor(Math.random()*3)],greetSkip?0:2200); g.classList.add("giggle"); await sk(400); g.classList.remove("giggle"); set(0); }
   else if(gag==="facepalm"){ set(6); await say(g,moodLines.facepalm[Math.floor(Math.random()*3)],greetSkip?0:2000); set(0); g.classList.add("land"); await sk(350); g.classList.remove("land"); }
   else if(gag==="smug"){ set(7); await say(g,moodLines.smug[Math.floor(Math.random()*3)],greetSkip?0:2300); g.classList.add("wink"); await sk(450); g.classList.remove("wink"); }
-  else if(gag!=="double") await say(g,pickLine(),greetSkip?0:2400);
+  else if(gag!=="double"&&gag!=="slow") await say(g,pickLine(),greetSkip?0:2400);
   if(gag==="singed" && !greetSkip){
    const from=flamePoint(), to=headPt();
    for(let i=0;i<10;i++){ const k=i/10; setTimeout(()=>fxSpawn(6, from.x+(to.x-from.x)*k, from.y+(to.y-from.y)*k-Math.sin(k*Math.PI)*30, {speed:.6,life:22,size:2.6,grav:0}), i*28); }
@@ -1821,8 +1868,9 @@ async function greet(){
    set(2); g.classList.add("hit","sooty"); fxSpawn(14,to.x,to.top+6,{dir:-Math.PI/2,spread:.8,speed:.8,life:90,size:4,grav:-.01,hue:0});
    await say(g,"…okay. I deserved that.",1700); g.classList.remove("hit");
   }
-  if(["plain","peek","rocket","double"].includes(gag) && Math.random()<.5 && !greetSkip){ set(3); g.classList.add("giggle"); document.getElementById("gTxt").textContent=["Ha! Okay okay, focus.","Heh. Let's get it.","Hahaha. Right. Work."][Math.floor(Math.random()*3)]; await wait(900); g.classList.remove("giggle"); set(0); await wait(150); }
-  set(1); g.classList.add("wink"); const hp=headPt(); fxSpawn(10,hp.x+18,hp.y-16,{speed:1.6,life:30,size:1.8,grav:0,hue:45});
+  if(!pf && ["plain","peek","rocket","double"].includes(gag) && Math.random()<.5 && !greetSkip){ set(3); g.classList.add("giggle"); document.getElementById("gTxt").textContent=["Ha! Okay okay, focus.","Heh. Let's get it.","Hahaha. Right. Work."][Math.floor(Math.random()*3)]; await wait(900); g.classList.remove("giggle"); set(0); await wait(150); }
+  if(!pf || !SAD[pf.mood]){ set(pf?EXP[pf.mood]:1); g.classList.add("wink"); const hp=headPt(); fxSpawn(10,hp.x+18,hp.y-16,{speed:1.6,life:30,size:1.8,grav:0,hue:45}); }
+  else { g.classList.add("droop"); }
   await sk(650); g.classList.remove("talk","wink");
   if(gag==="rocket"){ set(0); const p0=headPt(); let n=0; const trail=setInterval(()=>{ const p=headPt(); fxSpawn(6,p.x,p.y+40,{dir:Math.PI/2,spread:.7,speed:2.4,life:35,size:2.6,grav:.02}); if(++n>22) clearInterval(trail); },40); g.classList.add("out-up"); await wait(900); clearInterval(trail); }
   else if(gag==="singed"){ g.classList.add("out-shake"); await wait(900); }
@@ -2025,9 +2073,13 @@ document.addEventListener("click", e => {
  if(e.target.closest("#nextD")){ viewDate = add(viewDate,1); render(); return; }
  if(e.target.closest("#goToday")){ viewDate = today()<START?START:today(); render(); return; }
  const c = e.target.closest("[data-task]");
- if(c){ const D = day(viewDate), id = c.dataset.task, task = visible(viewDate).find(x=>x.id===id); const wasClear = cleared(viewDate);
+ if(c){ const D = day(viewDate), id = c.dataset.task, task = visible(viewDate).find(x=>x.id===id); const wasClear = cleared(viewDate), pB = dayPct(viewDate);
   if(D.checks[id]) delete D.checks[id]; else { D.checks[id] = task.xp; gain(task.xp, task.t.length>28?task.t.slice(0,26)+"…":task.t); spiritAct("hop"); cheer(); fx.task = id; }
-  if(!wasClear && cleared(viewDate)) setTimeout(()=>{ toast("Day cleared! +"+XPV.clear+" XP","lv"); spiritAct("burst"); cheer(2400); },350);
+  const isT = viewDate===(today()<START?START:today()), pA = dayPct(viewDate);
+  if(!wasClear && cleared(viewDate)){ setTimeout(()=>{ toast("Day cleared! +"+XPV.clear+" XP","lv"); spiritAct("burst"); cheer(2400); },350); if(isT) setTimeout(()=>cameo("overjoyed",["DAY CLEARED. I'm not crying, you are.","Every. Single. Box. Legend.","Cleared! Go rest, you earned it."][Math.floor(Math.random()*3)]),900); }
+  else if(isT && D.checks[id] && pB===0) setTimeout(()=>cameo("determined",["First one down. Momentum.","And we're off.","That's how it starts."][Math.floor(Math.random()*3)]),500);
+  else if(isT && D.checks[id] && pB<.5 && pA>=.5) setTimeout(()=>cameo("proud",["Halfway there. Keep cooking.","50%! Don't stop now."][Math.floor(Math.random()*2)]),500);
+  else if(isT && !D.checks[id] && wasClear) setTimeout(()=>cameo("disappointed","Wait… un-clearing? Okay…"),400);
   touchDay(viewDate); render(); if(D.checks[id]) dialBurst(id); return; }
  const q = e.target.closest("[data-q]"); if(q){ if(held){ held=false; return; } const d = tab==="today"?viewDate:(today()<START?START:today()); bump(d,q.dataset.q,1); return; }
  if(e.target.closest("#modeBtn")){ const to = e.target.closest("#modeBtn").dataset.to, t = today()<START?START:today(); meta.anchor = {date:t, buffer:buffer(), chAt: day(t).ch||0, relCounted:true}; meta.modes = meta.modes.filter(m=>m.from<add(t,1)).concat([{from:add(t,1), type:to}]); touchMeta(); toast(to==="cruise"?"Cruise mode from tomorrow":"Build mode from tomorrow"); render(); return; }
