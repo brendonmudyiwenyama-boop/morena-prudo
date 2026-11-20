@@ -8,9 +8,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<script src="config.js?v=202611201129"></script>
+<script src="config.js?v=202611201249"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="sync.js?v=202611201129"></script>
+<script src="sync.js?v=202611201249"></script>
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -492,7 +492,7 @@ body.splashing .perch,body.splashing .perch *,body.splashing .gly *{animation-pl
 /* falling feathers (Canva art, flutter physics in JS) */
 .fslit{position:absolute;z-index:6;width:10px;height:2px;border-radius:2px;background:rgba(40,22,10,.75);box-shadow:0 1px 0 rgba(255,240,210,.5);pointer-events:none}
 .fdust{position:absolute;z-index:8;width:3px;height:3px;border-radius:50%;background:rgba(120,90,50,.7);pointer-events:none;animation:fDust .6s ease-out forwards}
-.fdust.ink{background:rgba(70,60,120,.75);width:2px;height:2px}
+.fdust.fink{background:rgba(70,60,120,.75);width:2px;height:2px}
 @keyframes fDust{to{transform:translate(var(--dx),var(--dy));opacity:0}}
 /* Fenrir, the wolf pup who hops onto what's still undone */
 #fenrir{position:absolute;left:0;top:0;z-index:6;width:58px;height:75px;pointer-events:none;opacity:0;transition:opacity .4s;will-change:transform}
@@ -1140,7 +1140,7 @@ function spawnFeather(w){
  const wpx = big ? 15 + Math.random()*14 : 8 + Math.random()*6;
  el.style.width = wpx+"px"; el.innerHTML = '<img src="art/feather'+(1+Math.floor(Math.random()*5))+'.webp" alt="">';
  document.body.appendChild(el); feathersLive++;
- const tgt = big && Math.random() < .75 ? pinTarget() : null;
+ const tgt = Math.random() < .8 ? pinTarget() : null;
  if(tgt){ pinFeather(el, wpx, r, w, tgt); return; }
  const x0 = r.left + (w==="m" ? r.width*(.58+Math.random()*.28) : r.width*(.14+Math.random()*.28)), y0 = r.top + r.height*(.3+Math.random()*.25);
  const vy = (big?32:22) + Math.random()*16, A = (big?22:12) + Math.random()*16, om = 1.5 + Math.random()*1.2, ph = Math.random()*6.28, rot0 = -30 + Math.random()*60;
@@ -1161,15 +1161,19 @@ function spawnFeather(w){
 
 // unfinished desk items a falling feather can stab into
 function pinTarget(){
- const vis = [...document.querySelectorAll("#p-desk .spot, #p-desk .dcard")].filter(e => { const b = e.getBoundingClientRect(); return b.width>40 && b.top>70 && b.bottom<innerHeight-70 && b.left>-4 && b.right<innerWidth+4; });
+ if(tab!=="desk") return null;
+ const tb = document.querySelector("[data-tab]"), top = tb ? tb.parentElement.getBoundingClientRect().bottom + 10 : 120, bot = innerHeight - 80;   // stay clear of the header and the tab bar
+ const vis = [...document.querySelectorAll("#p-desk .spot, #p-desk .dcard")].filter(e => { const b = e.getBoundingClientRect(); return b.width>40 && Math.min(b.bottom,bot) - Math.max(b.top,top) > 34 && b.right > 30 && b.left < innerWidth-30; });
  return vis.length ? vis[Math.floor(Math.random()*vis.length)] : null;
 }
 function pinFeather(el, wpx, r, w, tgt){
+ if(wpx < 16){ wpx = 16 + Math.random()*6; el.style.width = wpx+"px"; }
  const img = el.querySelector("img"), ratio = 280/(img.naturalWidth||100), fh = wpx*ratio;
  el.style.transformOrigin = "50% 100%"; el.style.position = "absolute";
  const sx = scrollX, sy = scrollY;
  const x0 = r.left + (w==="m" ? r.width*(.58+Math.random()*.28) : r.width*(.14+Math.random()*.28)) + sx, y0 = r.top + r.height*(.3+Math.random()*.25) + sy + fh*.5;
- const b = tgt.getBoundingClientRect(), tx = b.left + b.width*(.2+Math.random()*.6) + sx, ty = b.top + Math.min(b.height*.55, 18 + Math.random()*b.height*.35) + sy;
+ const B = tgt.getBoundingClientRect(), vl = Math.max(B.left, 12), vr = Math.min(B.right, innerWidth-12), vt = Math.max(B.top, (document.querySelector("[data-tab]")||{parentElement:document.body}).parentElement.getBoundingClientRect().bottom + 10), vb = Math.min(B.bottom, innerHeight-80);
+ const tx = vl + (vr-vl)*(.2+Math.random()*.6) + sx, ty = vt + Math.min((vb-vt)*.6, 16 + Math.random()*(vb-vt)*.4) + sy;
  const pinRot = (Math.random()<.5?-1:1)*(8+Math.random()*16), A = 18 + Math.random()*14, om = 1.6 + Math.random()*1, ph = Math.random()*6.28;
  const Tf = 1500 + Math.random()*700, Td = 150, t0 = performance.now();
  const hx = tx - Math.sin(pinRot*Math.PI/180)*fh*.9, hy = ty - fh*.75;     // hover point just above the strike
@@ -1196,7 +1200,7 @@ function pinThwack(el, tx, ty, rot, put, wpx){
   if(t < 520){ const w = Math.exp(-t/120)*Math.sin(t/22)*9; put(tx, ty + Math.min(3, t/20), rot + w, 1); return requestAnimationFrame(step); }
   if(t < hold){ put(tx, ty+3, rot, 1); return requestAnimationFrame(step); }
   if(t < hold+520){ const k = (t-hold)/520; el.style.opacity = (1-k).toFixed(3); el.style.filter = "blur("+(k*1.5).toFixed(2)+"px) brightness("+(1+k*.6).toFixed(2)+")"; slit.style.opacity = (1-k).toFixed(3);
-   put(tx, ty+3 - k*6, rot, 1 - k*.3); if(Math.random()<.35) { const d = document.createElement("i"); d.className = "fdust ink"; d.style.left = (tx + (Math.random()-.5)*wpx)+"px"; d.style.top = (ty - Math.random()*wpx*2)+"px"; d.style.setProperty("--dx",((Math.random()-.5)*10)+"px"); d.style.setProperty("--dy",(-8-Math.random()*12)+"px"); document.body.appendChild(d); setTimeout(()=>d.remove(),600); }
+   put(tx, ty+3 - k*6, rot, 1 - k*.3); if(Math.random()<.35) { const d = document.createElement("i"); d.className = "fdust fink"; d.style.left = (tx + (Math.random()-.5)*wpx)+"px"; d.style.top = (ty - Math.random()*wpx*2)+"px"; d.style.setProperty("--dx",((Math.random()-.5)*10)+"px"); d.style.setProperty("--dy",(-8-Math.random()*12)+"px"); document.body.appendChild(d); setTimeout(()=>d.remove(),600); }
    return requestAnimationFrame(step); }
   el.remove(); slit.remove(); feathersLive--;
  };
