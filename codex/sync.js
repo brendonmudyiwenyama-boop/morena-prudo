@@ -140,20 +140,22 @@ document.addEventListener("click", e => {
 });
 
 // ---------- boot ----------
+// never let a slow or dead connection hold the app hostage: each network step gets a few seconds, then we move on
+const tmo = (p, ms, fb) => Promise.race([Promise.resolve(p).catch(() => fb), new Promise(r => setTimeout(() => r(fb), ms))]);
 async function boot(){
  style();
  if(!configured || !window.supabase){ runApp(cachedPriv()); readyFn(null); return; }
  client = window.supabase.createClient(CFG.url, CFG.key, {auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:false, storageKey:"arjuun-auth-"+P}});
- const {data} = await client.auth.getSession();
+ const {data} = await tmo(client.auth.getSession(), 4000, {data:{session:null}});
  if(!data.session){ readyFn(null);
   let later = 0; try{ later = +(localStorage.getItem("az-later-"+P)||0); }catch(e){}
   const show = () => (Date.now() - later > 3*864e5) ? signInFlow() : pill();
   runApp(cachedPriv());
   setTimeout(show, CFG.priv ? 600 : 7000);   // the Log has nothing to show until you sign in
   return; }
- if(await applyPendingRaven()) return;
- await maybeImport();
- runApp(await loadPriv());
+ if(await tmo(applyPendingRaven(), 3500, false)) return;
+ await tmo(maybeImport(), 3500, null);
+ runApp(await tmo(loadPriv(), 3500, cachedPriv()));
  readyFn(makeDb());
  const c = document.createElement("button"); c.className = "az-pill az-cloud"; c.textContent = "☁"; c.setAttribute("aria-label","Sync settings"); document.body.appendChild(c);
 }
