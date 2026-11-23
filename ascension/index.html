@@ -1772,9 +1772,9 @@ function bkEmbers(){
 }
 // ---------- Skullius opening ----------
 // Each clip: src, and dir = which way his sweep travels across the screen (1 = left to right, -1 = right to left).
-// The warp (speed-up, motion blur, streaks) is baked into the clip frames, so it plays identically on every device. sweepAt = seconds before the end where he has finished turning and his arm sweep starts: the smoke dispel begins there. dir = the way his hand sweeps (-1 = toward screen-left). Add more moods here and one is picked at random.
+// The warp (speed-up, motion blur, streaks) is baked into the clip frames, so it plays identically on every device. sweepAt = seconds before the end where the smoke dispel begins: after his arm sweep has played out natively (hiding a still-playing video makes iOS stutter it). dir = the way his hand sweeps (-1 = toward screen-left). Add more moods here and one is picked at random.
 const SK_CLIPS = [
- {id:"cocky", src:"intro/skullius_whip.mp4", smokeDir:1, sweepAt:.33, capOff:.7}
+ {id:"cocky", src:"intro/skullius_whip.mp4", smokeDir:1, sweepAt:.06, capOff:.62}
 ];
 let skRAF = 0;
 function skPick(){
