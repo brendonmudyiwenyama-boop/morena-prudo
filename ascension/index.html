@@ -886,10 +886,129 @@ body.splashing .perch *,body.splashing .kd *{animation-play-state:paused!importa
 @keyframes rTake{0%,100%{transform:none}15%{transform:rotate(calc(var(--cw)*1.4))}30%{transform:rotate(calc(var(--cw)*-.2))}48%{transform:rotate(calc(var(--cw)*1.6)) translateY(-1.5%)}70%{transform:rotate(calc(var(--cw)*.3))}}
 @media (prefers-reduced-motion:reduce){.aura b,.eye *,.motes b{animation:none!important}}
 
+/* ===== Huginn & Muninn, v3: real eyes, feather detail, rising embers, new flights ===== */
+/* eyes: a domed eyeball with a fibrous iris, a true pupil, wet catchlights and a scintillating glow */
+.eye{width:var(--ew,auto)}
+.eye .ball{position:absolute;inset:-14%;display:block;border-radius:50%;overflow:visible;z-index:2}
+.eye .ball svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.eye .ball .pup{transform-origin:50% 50%;animation:ePup 5.8s var(--ez) infinite}
+.rv.m .eye .ball .pup{animation-duration:6.6s;animation-delay:-2.2s}
+@keyframes ePup{0%,100%{transform:scale(1)}40%{transform:scale(.78)}55%{transform:scale(.8)}80%{transform:scale(1.08)}}
+.eye .ball .fib{transform-origin:50% 50%;animation:eSpin 26s linear infinite;opacity:.9}
+.rv.m .eye .ball .fib{animation-direction:reverse;animation-duration:31s}
+.eye .halo{opacity:calc(var(--eg)*.9)}
+.eye .glow{inset:-40%;opacity:.55;z-index:1}
+.eye .iris{display:none}
+/* scintillation: twinkling four-point stars and a ring of sparks that never quite sit still */
+.eye .scint{position:absolute;inset:-180%;z-index:3;pointer-events:none;mix-blend-mode:screen}
+.eye .scint i{position:absolute;left:50%;top:50%;width:var(--s,34%);aspect-ratio:1;translate:-50% -50%;
+ background:radial-gradient(closest-side,#fff 0,color-mix(in srgb,var(--ec) 90%,#fff) 18%,transparent 60%),
+  linear-gradient(90deg,transparent 47%,#fff 50%,transparent 53%),linear-gradient(0deg,transparent 47%,#fff 50%,transparent 53%);
+ -webkit-mask:radial-gradient(closest-side,#000 30%,transparent 100%);mask:radial-gradient(closest-side,#000 30%,transparent 100%);
+ opacity:0;animation:eTw var(--d,2.6s) var(--ez) var(--dl,0s) infinite;transform:rotate(var(--r,0deg)) translate(var(--tx,0),var(--ty,0))}
+.eye .scint i:nth-child(1){--s:44%;--d:2.2s;--dl:-.3s}
+.eye .scint i:nth-child(2){--s:22%;--d:3.1s;--dl:-1.4s;--r:45deg;--tx:30%;--ty:-26%}
+.eye .scint i:nth-child(3){--s:18%;--d:2.7s;--dl:-2s;--r:20deg;--tx:-34%;--ty:20%}
+.eye .scint i:nth-child(4){--s:14%;--d:3.6s;--dl:-.9s;--r:70deg;--tx:22%;--ty:34%}
+.eye .scint i:nth-child(5){--s:12%;--d:2.4s;--dl:-1.7s;--r:10deg;--tx:-28%;--ty:-30%}
+@keyframes eTw{0%,100%{opacity:0;scale:.4}18%{opacity:1;scale:1}30%{opacity:.35;scale:.7}44%{opacity:.95;scale:1.1}62%{opacity:0;scale:.5}}
+.eye .ring{position:absolute;inset:-70%;z-index:3;border-radius:50%;pointer-events:none;mix-blend-mode:screen;
+ background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--ec) 80%,#fff) 0 2deg,transparent 2deg 17deg);
+ -webkit-mask:radial-gradient(circle,transparent 52%,#000 56%,#000 60%,transparent 66%);mask:radial-gradient(circle,transparent 52%,#000 56%,#000 60%,transparent 66%);
+ opacity:.55;animation:eSpin 5s linear infinite,eFlick 1.7s steps(6) infinite}
+.rv.m .eye .ring{animation-direction:reverse,normal}
+@keyframes eFlick{0%{opacity:.25;filter:hue-rotate(0)}20%{opacity:.7}40%{opacity:.4;filter:hue-rotate(18deg)}60%{opacity:.8}80%{opacity:.35;filter:hue-rotate(-14deg)}100%{opacity:.6}}
+.rv.blink .eye .ball,.rv.blink .eye .scint,.rv.blink .eye .ring{opacity:0;transition:opacity .06s}
+.eye .lid{z-index:4}
+.rv.speak .eye .scint i{animation-duration:1.1s}
 
-/* ===== Jörmungandr: the World Serpent coils around the Codex and grows with every full moon ===== */
-#jorm{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:0}
-.jbadge{display:inline-flex;align-items:center;gap:4px}
+/* feather detail: scalloped contour feathers and fine barbs, riding each painted layer */
+.perch .barbs,.perch .barbs2{position:absolute;inset:0;pointer-events:none;-webkit-mask-size:100% 100%;mask-size:100% 100%}
+.perch .barbs{mix-blend-mode:soft-light;opacity:.7;background-size:9% auto;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 32'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M2 10 Q10 22 18 10' stroke='%23fff' stroke-opacity='.5' stroke-width='1.2'/%3E%3Cpath d='M22 10 Q30 22 38 10' stroke='%23fff' stroke-opacity='.5' stroke-width='1.2'/%3E%3Cpath d='M-8 26 Q0 38 8 26' stroke='%23fff' stroke-opacity='.5' stroke-width='1.2'/%3E%3Cpath d='M12 26 Q20 38 28 26' stroke='%23fff' stroke-opacity='.5' stroke-width='1.2'/%3E%3Cpath d='M32 26 Q40 38 48 26' stroke='%23fff' stroke-opacity='.5' stroke-width='1.2'/%3E%3Cpath d='M3 11.5 Q10 23 17 11.5 M23 11.5 Q30 23 37 11.5 M13 27.5 Q20 39 27 27.5' stroke='%23000' stroke-opacity='.5' stroke-width='1'/%3E%3Cpath d='M10 12 l-3 4 M10 14 l-3 3.5 M10 12 l3 4 M10 14 l3 3.5 M30 12 l-3 4 M30 14 l-3 3.5 M30 12 l3 4 M30 14 l3 3.5 M20 28 l-3 4 M20 30 l-3 3.5 M20 28 l3 4 M20 30 l3 3.5' stroke='%23fff' stroke-opacity='.16' stroke-width='.5'/%3E%3C/g%3E%3C/svg%3E")}
+.perch .lyr.wing .barbs{background-size:7% auto;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 44'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M2 6 Q2 20 7 22 Q12 20 12 6' stroke='%23fff' stroke-opacity='.42' stroke-width='1'/%3E%3Cpath d='M14 28 Q14 42 19 44 Q24 42 24 28' stroke='%23fff' stroke-opacity='.42' stroke-width='1'/%3E%3Cpath d='M3 7 Q3 20.5 7 22.6 M13 7 Q13 20.5 7 22.6' stroke='%23000' stroke-opacity='.45' stroke-width='.9'/%3E%3Cpath d='M7 12 l-2.5 3 M7 15 l-2.5 3 M7 12 l2.5 3 M7 15 l2.5 3 M19 34 l-2.5 3 M19 37 l-2.5 3 M19 34 l2.5 3 M19 37 l2.5 3' stroke='%23fff' stroke-opacity='.15' stroke-width='.45'/%3E%3C/g%3E%3C/svg%3E")}
+.perch .lyr.head .barbs{background-size:7% auto;opacity:.6}
+/* a slow iridescent shimmer running along the barbs, like oil on a crow's back */
+.perch .barbs2{mix-blend-mode:color-dodge;opacity:.22;background:linear-gradient(100deg,transparent 30%,#3c6bff 42%,#a14dff 50%,#21c6c9 58%,transparent 70%);background-size:300% 100%;animation:pSheen 7.5s var(--ez) infinite}
+.rv.m .barbs2{animation-delay:-3s;animation-duration:8.6s}
+@media (prefers-color-scheme:dark){.perch .barbs{opacity:.7}.perch .barbs2{opacity:.3}}
+
+/* more motes: sparks, long embers and little rune-stars rising out of each raven */
+.motes b:nth-child(n+7){animation-name:mote2}
+.motes b:nth-child(7){--mx:6%;--mc:#7ef3ff;--mdl:-1.2s;top:58%;--md:5.2s}
+.motes b:nth-child(8){--mx:11%;--mc:#ffe08a;--mdl:-3.6s;top:48%;--md:4.4s}
+.motes b:nth-child(9){--mx:18%;--mc:#c49bff;--mdl:-.2s;top:66%;--md:6.4s}
+.motes b:nth-child(10){--mx:3%;--mc:#9dffc8;--mdl:-2.8s;top:40%;--md:5.6s}
+.motes b:nth-child(11){--mx:15%;--mc:#ffb3d6;--mdl:-4.6s;top:56%;--md:4.9s}
+.motes b:nth-child(12){--mx:9%;--mc:#8fb4ff;--mdl:-1.9s;top:72%;--md:6s}
+.motes b:nth-child(13),.motes b:nth-child(14),.motes b:nth-child(15){width:.35%;aspect-ratio:1/5;border-radius:99px;background:linear-gradient(to top,transparent,var(--mc) 40%,#fff);animation-name:ember}
+.motes b:nth-child(13){--mx:7%;--mc:#ffcf6a;--mdl:-.6s;top:62%;--md:3.6s}
+.motes b:nth-child(14){--mx:16%;--mc:#7ef3ff;--mdl:-2.1s;top:52%;--md:4.2s}
+.motes b:nth-child(15){--mx:12%;--mc:#d7a6ff;--mdl:-3.3s;top:68%;--md:3.9s}
+.motes b:nth-child(16),.motes b:nth-child(17),.motes b:nth-child(18){width:1.5%;border-radius:0;background:radial-gradient(closest-side,#fff,var(--mc) 40%,transparent 75%);
+ clip-path:polygon(50% 0,58% 42%,100% 50%,58% 58%,50% 100%,42% 58%,0 50%,42% 42%);animation-name:rune}
+.motes b:nth-child(16){--mx:4%;--mc:#ffe08a;--mdl:-1s;top:46%;--md:5.8s}
+.motes b:nth-child(17){--mx:19%;--mc:#7ef3ff;--mdl:-3.9s;top:60%;--md:6.6s}
+.motes b:nth-child(18){--mx:10%;--mc:#ffb3d6;--mdl:-2.5s;top:38%;--md:5.2s}
+@keyframes mote2{0%{opacity:0;transform:translate(0,0) scale(.4)}15%{opacity:1}55%{transform:translate(-7px,-38px) scale(1)}100%{opacity:0;transform:translate(5px,-82px) scale(.6)}}
+@keyframes ember{0%{opacity:0;transform:translate(0,0)}12%{opacity:1}100%{opacity:0;transform:translate(3px,-96px) scaleY(1.6)}}
+@keyframes rune{0%{opacity:0;transform:translate(0,0) rotate(0) scale(.3)}20%{opacity:1;transform:translate(-2px,-14px) rotate(60deg) scale(1)}70%{opacity:.8}100%{opacity:0;transform:translate(6px,-70px) rotate(220deg) scale(.5)}}
+.rv.loop .motes b,.rv.orbit .motes b,.rv.dart .motes b,.rv.roll .motes b,.rv.hover .motes b,.rv.swoop .motes b{animation-duration:1.6s}
+/* trailing sparks thrown off during flights */
+.rvspark{position:absolute;width:1.1%;aspect-ratio:1;border-radius:50%;pointer-events:none;z-index:5;mix-blend-mode:screen;
+ background:radial-gradient(circle,#fff,var(--sc,#8ff) 45%,transparent 72%);animation:rvSpark var(--sd,900ms) cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes rvSpark{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--sx),var(--sy)) scale(.2)}}
+
+/* ---- new flights, short and sweet ---- */
+.rv.loop,.rv.orbit,.rv.dart,.rv.roll,.rv.hover,.rv.swoop{z-index:3}
+.rv.loop .wing .act,.rv.orbit .wing .act,.rv.dart .wing .act,.rv.roll .wing .act,.rv.hover .wing .act,.rv.swoop .wing .act{animation:rBeat .18s var(--ez) infinite}
+/* loop-the-loop above the perch */
+.rv.loop{animation:rLoop 2.2s cubic-bezier(.45,0,.35,1)}
+@keyframes rLoop{0%,100%{transform:none}8%{transform:translateY(1.4%) scale(1.03,.95)}20%{transform:translate(calc(var(--dx)*1),-16%) rotate(calc(var(--dr)*-.3))}
+ 32%{transform:translate(calc(var(--dx)*2.4),-30%) rotate(calc(var(--dr)*-1))}44%{transform:translate(calc(var(--dx)*1.4),-44%) rotate(calc(var(--dr)*-2))}
+ 56%{transform:translate(calc(var(--dx)*-.2),-34%) rotate(calc(var(--dr)*-3))}68%{transform:translate(calc(var(--dx)*.4),-18%) rotate(calc(var(--dr)*-4))}
+ 84%{transform:translateY(.8%) rotate(calc(var(--dr)*-4)) scale(1.03,.95)}}
+.rv.h{--dx:4%;--dr:90deg} .rv.m{--dx:-4%;--dr:-90deg}
+.rv.h.loop,.rv.h.roll{transform-origin:24% 52%!important}.rv.m.loop,.rv.m.roll{transform-origin:70% 54%!important}
+/* orbit: swing out wide, pass behind (smaller, dimmer) and come back round */
+.rv.orbit{animation:rOrbit 2.6s cubic-bezier(.45,0,.35,1)}
+@keyframes rOrbit{0%,100%{transform:none;filter:none}10%{transform:translateY(1%) scale(1.02,.96)}24%{transform:translate(calc(var(--dx)*4),-22%) rotate(calc(var(--dr)*-.12)) scale(1.06)}
+ 42%{transform:translate(calc(var(--dx)*9),-30%) scale(.86) rotate(calc(var(--dr)*.06))}58%{transform:translate(calc(var(--dx)*5),-36%) scale(.62);filter:brightness(.7) blur(.6px)}
+ 74%{transform:translate(calc(var(--dx)*-1),-24%) scale(.84) rotate(calc(var(--dr)*.1));filter:none}90%{transform:translateY(.6%) scale(1.03,.95)}}
+/* dart: shoot off the edge, wheel round and sweep back in */
+.rv.dart{animation:rDart 2.4s cubic-bezier(.5,0,.3,1)}
+@keyframes rDart{0%,100%{transform:none;opacity:1}8%{transform:translateY(1.2%) scale(1.03,.94)}26%{transform:translate(calc(var(--dx)*10),-26%) rotate(calc(var(--dr)*-.18));opacity:1}
+ 40%{transform:translate(calc(var(--dx)*22),-20%) rotate(calc(var(--dr)*-.25)) scale(.9);opacity:0}52%{transform:translate(calc(var(--dx)*-16),-28%) scale(-.9,.9);opacity:0}
+ 66%{transform:translate(calc(var(--dx)*-6),-22%) scale(-1,1) rotate(calc(var(--dr)*.12));opacity:1}80%{transform:translate(calc(var(--dx)*-1),-8%) scale(1)}92%{transform:translateY(.6%) scale(1.03,.95)}}
+/* barrel roll mid-hop */
+.rv.roll{animation:rRoll 1.8s cubic-bezier(.45,0,.35,1)}
+@keyframes rRoll{0%,100%{transform:none}10%{transform:translateY(1.2%) scale(1.03,.95)}28%{transform:translate(calc(var(--dx)*1.4),-20%) rotate(calc(var(--dr)*-.1))}
+ 40%{transform:translate(calc(var(--dx)*2.4),-25%) scaleY(.1)}50%{transform:translate(calc(var(--dx)*2.8),-26%) scaleY(-1)}60%{transform:translate(calc(var(--dx)*2.4),-25%) scaleY(-.1)}
+ 72%{transform:translate(calc(var(--dx)*1),-18%) scaleY(1) rotate(calc(var(--dr)*.06))}88%{transform:translateY(.7%) scale(1.03,.95)}}
+/* hover: hang in the air on quick wingbeats, bobbing */
+.rv.hover{animation:rHover 1.7s cubic-bezier(.45,0,.35,1)}
+@keyframes rHover{0%,100%{transform:none}12%{transform:translateY(1%) scale(1.02,.96)}26%{transform:translateY(-14%) rotate(calc(var(--dr)*-.05))}40%{transform:translateY(-11%)}
+ 54%{transform:translateY(-15%) rotate(calc(var(--dr)*.04))}68%{transform:translateY(-12%)}86%{transform:translateY(.6%) scale(1.03,.95)}}
+/* swoop: drop off the branch, skim low and climb back */
+.rv.swoop{animation:rSwoop 2s cubic-bezier(.45,0,.35,1)}
+@keyframes rSwoop{0%,100%{transform:none}10%{transform:translateY(-6%)}30%{transform:translate(calc(var(--dx)*3),14%) rotate(calc(var(--dr)*.2))}
+ 50%{transform:translate(calc(var(--dx)*6),16%) rotate(calc(var(--dr)*.05))}68%{transform:translate(calc(var(--dx)*3),-12%) rotate(calc(var(--dr)*-.15))}86%{transform:translateY(.6%) scale(1.03,.95)}}
+
+/* ---- the peek: one raven flies up to the glass and checks on you ---- */
+.rvfly{position:fixed;z-index:90;pointer-events:none;will-change:transform,filter}
+.rvfly .rv{position:absolute;inset:0}
+.rvpeek{position:fixed;inset:0;z-index:91;opacity:0;cursor:pointer;will-change:opacity,filter,transform}
+.rvpeek canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.rvpeek .pk-say{position:absolute;left:0;right:0;bottom:calc(9% + env(safe-area-inset-bottom,0px));margin:0 auto;width:max-content;max-width:80%;
+ font:800 clamp(14px,4.2vw,19px)/1.3 var(--f-head,system-ui);color:#f5efe2;text-align:center;letter-spacing:.01em;text-shadow:0 0 12px rgba(0,0,0,.9),0 0 24px var(--pc,#ffb02a);
+ opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s}
+.rvpeek .pk-say small{display:block;font-size:.62em;letter-spacing:.2em;text-transform:uppercase;color:var(--pc,#ffb02a);margin-bottom:3px}
+.rvpeek .pk-say.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.eye .scint i,.eye .ring,.eye .ball *,.perch .barbs2,.motes b{animation:none!important}}
+
+
+
 
 /* ===== Viking arm-rings: a twisted gold torc with beast-head terminals around every dial and badge ===== */
 :root{--torc:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23f6dd9a%22/%3E%3Cstop%20offset%3D%22.35%22%20stop-color%3D%22%23c99a45%22/%3E%3Cstop%20offset%3D%22.6%22%20stop-color%3D%22%237a5320%22/%3E%3Cstop%20offset%3D%22.8%22%20stop-color%3D%22%23d6a956%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%235e3e17%22/%3E%3C/linearGradient%3E%3CradialGradient%20id%3D%22k%22%20cx%3D%22.35%22%20cy%3D%22.3%22%20r%3D%22.8%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffefc0%22/%3E%3Cstop%20offset%3D%22.45%22%20stop-color%3D%22%23c8963f%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%234f3312%22/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath%20d%3D%22M46.22%20108.06%20A50%2050%200%201%201%2073.78%20108.06%22%20fill%3D%22none%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%2210.5%22%20stroke-linecap%3D%22round%22/%3E%3Cpath%20d%3D%22M46.22%20108.06%20A50%2050%200%201%201%2073.78%20108.06%22%20fill%3D%22none%22%20stroke%3D%22url%28%23g%29%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22/%3E%3Cpath%20d%3D%22M50.26%20104.85%20L42.18%20111.27%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M48.40%20105.15%20L41.92%20110.37%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M43.64%20102.88%20L34.68%20108.02%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M41.76%20102.90%20L34.56%20107.08%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M37.39%2099.94%20L27.76%20103.67%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M35.53%2099.68%20L27.78%20102.73%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M31.65%2096.10%20L21.57%2098.34%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M29.85%2095.56%20L21.74%2097.41%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M26.55%2091.43%20L16.25%2092.14%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M24.86%2090.63%20L16.55%2091.25%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M22.21%2086.06%20L11.93%2085.21%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M20.66%2085.01%20L12.36%2084.37%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M18.73%2080.09%20L8.69%2077.71%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M17.35%2078.82%20L9.24%2076.95%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M16.18%2073.67%20L6.61%2069.81%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M15.01%2072.20%20L7.27%2069.14%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M14.63%2066.94%20L5.74%2061.69%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M13.69%2065.31%20L6.50%2061.12%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M14.10%2060.05%20L6.10%2053.52%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M13.41%2058.30%20L6.94%2053.08%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M14.61%2053.16%20L7.69%2045.51%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M14.20%2051.33%20L8.58%2045.19%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M16.15%2046.43%20L10.45%2037.82%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M16.02%2044.55%20L11.38%2037.64%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M18.69%2040.00%20L14.34%2030.64%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M18.83%2038.13%20L15.29%2030.60%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M22.16%2034.03%20L19.27%2024.12%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M22.58%2032.20%20L20.21%2024.22%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M26.48%2028.64%20L25.12%2018.41%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M27.18%2026.90%20L26.03%2018.65%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M31.57%2023.97%20L31.75%2013.65%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M32.52%2022.34%20L32.62%2014.02%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M37.30%2020.11%20L39.03%209.93%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M38.48%2018.65%20L39.83%2010.43%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M43.54%2017.15%20L46.78%207.35%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M44.93%2015.89%20L47.50%207.97%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M50.16%2015.17%20L54.83%205.96%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M51.72%2014.12%20L55.45%206.68%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M57.00%2014.20%20L63.00%205.80%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M58.70%2013.40%20L63.50%206.60%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M63.91%2014.27%20L71.10%206.86%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M65.71%2013.73%20L71.47%207.73%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M70.73%2015.37%20L78.95%209.13%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M72.59%2015.11%20L79.19%2010.04%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M77.30%2017.49%20L86.37%2012.55%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M79.18%2017.51%20L86.47%2013.49%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M83.49%2020.57%20L93.19%2017.05%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M85.34%2020.87%20L93.15%2017.99%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M89.14%2024.54%20L99.26%2022.51%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M90.93%2025.12%20L99.08%2023.44%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M94.13%2029.31%20L104.44%2028.83%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M95.81%2030.15%20L104.12%2029.72%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M98.35%2034.78%20L108.62%2035.85%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M99.89%2035.87%20L108.17%2036.68%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M101.70%2040.82%20L111.69%2043.42%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M103.06%2042.13%20L111.12%2044.18%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M104.11%2047.30%20L113.59%2051.37%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M105.25%2048.79%20L112.92%2052.03%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M105.51%2054.06%20L114.28%2059.51%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M106.42%2055.71%20L113.51%2060.06%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M105.89%2060.96%20L113.74%2067.66%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M106.54%2062.72%20L112.90%2068.09%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M105.22%2067.84%20L111.98%2075.64%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M105.60%2069.68%20L111.09%2075.94%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M103.54%2074.54%20L109.04%2083.27%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M103.63%2076.41%20L108.11%2083.43%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M100.86%2080.90%20L105.00%2090.36%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M100.68%2082.77%20L104.05%2090.38%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M97.26%2086.80%20L99.93%2096.77%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M96.80%2088.62%20L99.00%2096.65%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M92.82%2092.09%20L93.96%20102.35%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M92.09%2093.82%20L93.05%20102.09%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M87.63%2096.65%20L87.22%20106.97%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M86.65%2098.25%20L86.36%20106.57%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M81.82%20100.38%20L79.86%20110.52%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M80.60%20101.82%20L79.07%20110.00%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M75.51%20103.20%20L72.06%20112.93%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M74.09%20104.44%20L71.35%20112.30%22%20stroke%3D%22%23ffe9b0%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.55%22/%3E%3Cellipse%20cx%3D%2246.22%22%20cy%3D%22108.06%22%20rx%3D%227%22%20ry%3D%226%22%20fill%3D%22%233a250c%22/%3E%3Cellipse%20cx%3D%2246.22%22%20cy%3D%22108.06%22%20rx%3D%226%22%20ry%3D%225%22%20fill%3D%22url%28%23k%29%22/%3E%3Cpath%20d%3D%22M46.22%20104.86%20Q54.02%20107.06%2054.62%20109.26%20Q51.02%20111.46%2046.22%20111.66z%22%20fill%3D%22url%28%23k%29%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%22.8%22/%3E%3Ccircle%20cx%3D%2247.62%22%20cy%3D%22106.46%22%20r%3D%221.1%22%20fill%3D%22%231b0f04%22/%3E%3Ccircle%20cx%3D%2247.32%22%20cy%3D%22106.16%22%20r%3D%22.35%22%20fill%3D%22%23fff4cc%22/%3E%3Cellipse%20cx%3D%2273.78%22%20cy%3D%22108.06%22%20rx%3D%227%22%20ry%3D%226%22%20fill%3D%22%233a250c%22/%3E%3Cellipse%20cx%3D%2273.78%22%20cy%3D%22108.06%22%20rx%3D%226%22%20ry%3D%225%22%20fill%3D%22url%28%23k%29%22/%3E%3Cpath%20d%3D%22M73.78%20104.86%20Q65.98%20107.06%2065.38%20109.26%20Q68.98%20111.46%2073.78%20111.66z%22%20fill%3D%22url%28%23k%29%22%20stroke%3D%22%233a250c%22%20stroke-width%3D%22.8%22/%3E%3Ccircle%20cx%3D%2272.38%22%20cy%3D%22106.46%22%20r%3D%221.1%22%20fill%3D%22%231b0f04%22/%3E%3Ccircle%20cx%3D%2272.68%22%20cy%3D%22106.16%22%20r%3D%22.35%22%20fill%3D%22%23fff4cc%22/%3E%3C/svg%3E")}
@@ -1630,9 +1749,9 @@ function bkEmbers(){
 }
 // ---------- Skullius opening ----------
 // Each clip: src, and dir = which way his sweep travels across the screen (1 = left to right, -1 = right to left).
-// sweepAt = seconds before the clip ends when the darkness starts to break up. Add more moods here and one is picked at random.
+// sweepAt = seconds before the clip ends when he starts to turn: from there he whips round in a blur and wipes the screen. Add more moods here and one is picked at random.
 const SK_CLIPS = [
- {id:"cocky", src:"intro/skullius_cocky.mp4", dir:1, sweepAt:1.35}
+ {id:"cocky", src:"intro/skullius_cocky.mp4", dir:1, sweepAt:1.2}
 ];
 let skRAF = 0;
 function skPick(){
@@ -1662,11 +1781,11 @@ function runSplash(){
   const watch = () => {
    if(splashDone) return;
    const dur = v.duration || 4;
-   if(!revealing && v.currentTime >= dur - clip.sweepAt){ revealing = true; t.classList.remove("on"); t.classList.add("off"); skDispel(v, clip.dir); return; }
+   if(!revealing && v.currentTime >= dur - clip.sweepAt){ revealing = true; t.classList.remove("on"); t.classList.add("off"); skWhip(v, clip.dir); return; }
    skRAF = requestAnimationFrame(watch);
   };
   skRAF = requestAnimationFrame(watch);
-  v.addEventListener("ended", ()=>{ if(!revealing){ revealing = true; skDispel(v, clip.dir); } }, {once:true});
+  v.addEventListener("ended", ()=>{ if(!revealing){ revealing = true; skWhip(v, clip.dir); } }, {once:true});
  };
  const go = () => {
   if(started || splashDone) return; started = true;
@@ -1693,6 +1812,50 @@ function runSplash(){
   v.src = URL.createObjectURL(new Blob([b], {type:"video/mp4"}));
   v.load();
  }).catch(bail);
+}
+// He starts to turn, then whips round faster than the eye can follow: the frame smears into motion blur,
+// streaks tear across the dark, and a bright edge wipes the screen in the direction he turned, uncovering the Log.
+function skWhip(v, dir){
+ const sp = document.getElementById("splash"), c = document.getElementById("skSmoke");
+ const dpr = Math.min(1.5, devicePixelRatio||1), W = innerWidth, H = innerHeight;
+ c.width = Math.round(W*dpr); c.height = Math.round(H*dpr); const X = c.getContext("2d"); X.setTransform(dpr,0,0,dpr,0,0);
+ const vw = v.videoWidth||1080, vh = v.videoHeight||1936, sc = Math.min(W/vw, H/vh), dw = vw*sc, dh = vh*sc, dx = (W-dw)/2, dy = (H-dh)*.42;
+ try{ v.playbackRate = 3.2; }catch(e){}                       // the turn itself, sped up
+ sp.classList.add("revealing");                                 // the canvas takes over drawing him
+ const T0 = performance.now(), WHIP = 430, WIPE = 620, WIPE_AT = 300;
+ const streaks = []; for(let i=0;i<26;i++) streaks.push({y:Math.random()*H, l:W*(.25+Math.random()*.6), w:.6+Math.random()*2.2, s:.6+Math.random()*.9, o:Math.random(), a:.15+Math.random()*.4});
+ const easeIn = x => x*x*x, easeIO = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
+ const frame = now => {
+  if(splashDone) return;
+  const t = now - T0, kw = Math.min(1, t/WHIP), kp = Math.max(0, Math.min(1, (t-WIPE_AT)/WIPE));
+  X.globalCompositeOperation = "source-over"; X.globalAlpha = 1; X.fillStyle = "#000"; X.fillRect(0,0,W,H);
+  // motion blur: the same frame laid down many times along the direction of the turn, averaged together
+  const blur = W*(.02 + .2*easeIn(kw)) * (1 - kp*.4), n = 11, stretch = 1 + .07*easeIn(kw);
+  X.globalCompositeOperation = "lighter"; X.globalAlpha = 1/n;
+  for(let i=0;i<n;i++){ const o = dir*blur*(i/(n-1) - .35); try{ X.drawImage(v, dx + o - dw*(stretch-1)/2, dy, dw*stretch, dh); }catch(e){} }
+  X.globalAlpha = 1;
+  // speed streaks tearing across the dark
+  for(const s of streaks){ const p = ((s.o + t/1000*s.s*3*dir) % 1 + 1) % 1, x = dir>0 ? -s.l + p*(W+s.l*2) : W + s.l - p*(W+s.l*2), a = s.a*easeIn(kw)*(1-kp);
+   if(a < .01) continue; const g = X.createLinearGradient(x, 0, x + dir*s.l, 0); g.addColorStop(0,"rgba(255,235,200,0)"); g.addColorStop(.7,"rgba(255,235,200,"+a+")"); g.addColorStop(1,"rgba(255,255,255,0)");
+   X.fillStyle = g; X.fillRect(Math.min(x, x+dir*s.l), s.y, s.l, s.w); }
+  X.globalCompositeOperation = "source-over";
+  // the wipe: everything behind the edge is cut away, revealing the Log
+  if(kp > 0){
+   const e = easeIO(kp), front = dir>0 ? -W*.15 + W*1.4*e : W*1.15 - W*1.4*e, soft = W*.06;
+   X.globalCompositeOperation = "destination-out";
+   const g = X.createLinearGradient(front - dir*soft, 0, front, 0); g.addColorStop(0,"rgba(0,0,0,1)"); g.addColorStop(1,"rgba(0,0,0,0)");
+   X.fillStyle = "#000"; if(dir>0) X.fillRect(0,0,Math.max(0,front-soft),H); else X.fillRect(Math.min(W,front+soft),0,W,H);
+   X.fillStyle = g; X.fillRect(Math.min(front, front-dir*soft), 0, soft, H);
+   // the leading edge: a hot streak of light riding the wipe
+   X.globalCompositeOperation = "lighter";
+   const eg = X.createLinearGradient(front - dir*W*.12, 0, front + dir*W*.02, 0); eg.addColorStop(0,"rgba(255,190,90,0)"); eg.addColorStop(.75,"rgba(255,200,120,"+(.55*(1-kp*.6))+")"); eg.addColorStop(.95,"rgba(255,250,235,"+(.9*(1-kp*.5))+")"); eg.addColorStop(1,"rgba(255,255,255,0)");
+   X.fillStyle = eg; X.fillRect(Math.min(front - dir*W*.12, front + dir*W*.02), 0, W*.14, H);
+   X.globalCompositeOperation = "source-over";
+  }
+  if(t >= WIPE_AT + WIPE + 60){ X.clearRect(0,0,W,H); endSplash(); return; }
+  skRAF = requestAnimationFrame(frame);
+ };
+ skRAF = requestAnimationFrame(frame);
 }
 // The darkness breaks apart like smoke in the wake of his hand, uncovering the Log underneath.
 function skDispel(v, dir){
@@ -2229,7 +2392,7 @@ function speak(w){
 }
 function sayLoop(){ if(!document.hidden && splashDone && !rbusy(sayTurn) && speak(sayTurn)) sayTurn = sayTurn==="h"?"m":"h"; setTimeout(sayLoop, 11000 + Math.random()*8000); }
 function idleLoop(){
- const moves = [["h","preen",2200],["m","preen",2200],["h","puff",1500],["m","puff",1500],["h","shake",800],["m","shake",800],["h","flap",1600],["m","flap",1600],["feather"],["h","cawing",950],["m","cawing",950],["h","look",2600],["m","look",2600],["h","tilt",2000],["m","tilt",2000],["h","take",1100],["m","take",1100],["h","hop",1900],["m","hop",1900]];
+ const moves = [["h","preen",2200],["m","preen",2200],["h","puff",1500],["m","puff",1500],["h","shake",800],["m","shake",800],["h","flap",1600],["m","flap",1600],["feather"],["h","cawing",950],["m","cawing",950],["h","look",2600],["m","look",2600],["h","tilt",2000],["m","tilt",2000],["h","take",1100],["m","take",1100],["h","hop",1900],["m","hop",1900],["h","loop",2200],["m","loop",2200],["h","orbit",2600],["m","orbit",2600],["h","dart",2400],["m","dart",2400],["h","roll",1800],["m","roll",1800],["h","hover",1700],["m","hover",1700],["h","swoop",2000],["m","swoop",2000]];
  if(!document.hidden && splashDone && perchOnScreen()){ const m = moves[Math.floor(Math.random()*moves.length)];
   if(m[0]==="feather") dropFeather(Math.random()<.5?"h":"m", 1+Math.floor(Math.random()*2));
   else if(!rbusy(m[0])){ act(m[0],m[1],m[2]); if(m[1]==="flap"||m[1]==="hop") dropFeather(m[0],2); else if(m[1]==="puff"||m[1]==="shake") setTimeout(()=>dropFeather(m[0],1),400); } }
@@ -2398,6 +2561,264 @@ document.addEventListener("click", e => { if(e.target.closest("#mvBtn")){ moveDa
  }, ()=>setSync("Offline: saving on this device"));
  db.doc("bridge/inbox").onSnapshot(s=>{ if(s.exists){ const v=JSON.parse(JSON.stringify(s.data())); if(!cxIn || (v.ts||"")>(cxIn.ts||"")){ cxIn=v; try{ localStorage.setItem("asc-cx",JSON.stringify(cxIn)); }catch(e){} if(tab==="today") renderToday(); } } else if(cxIn) saveCx(); }, ()=>{});
 })();
+
+// ================= Huginn & Muninn v3: real eyes, feather detail, embers, new flights, the peek =================
+const RP = { flights:{loop:2200, orbit:2600, dart:2400, roll:1800, hover:1700, swoop:2000}, peekShown:false, t0:Date.now() };
+const rpRM = () => !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+// a tiny eyeball: domed sclera-less raven eye, fibrous iris, round pupil, wet catchlights
+function rpEyeSVG(k){
+ const c = k==="h" ? ["#fff1c2","#ffb02a","#b45a00","#3a1600"] : ["#e8fbff","#8fd2ff","#2a6fd0","#071a3a"], id = "rpe"+k+Math.random().toString(36).slice(2,7);
+ let fib = ""; for(let i=0;i<36;i++){ const a = i*10*Math.PI/180 + (i%3)*.05, r0 = 18 + (i%2)*2, r1 = 40 - (i%4)*2.5;
+  fib += '<path d="M'+(50+Math.cos(a)*r0).toFixed(1)+' '+(50+Math.sin(a)*r0).toFixed(1)+' L'+(50+Math.cos(a+.06)*r1).toFixed(1)+' '+(50+Math.sin(a+.06)*r1).toFixed(1)+'" stroke="'+(i%3?c[0]:c[2])+'" stroke-opacity="'+(i%3?.55:.7)+'" stroke-width="'+(i%3?1.6:2.2)+'"/>'; }
+ return '<svg viewBox="0 0 100 100" aria-hidden="true"><defs>'+
+  '<radialGradient id="'+id+'i" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="'+c[0]+'"/><stop offset=".38" stop-color="'+c[1]+'"/><stop offset=".78" stop-color="'+c[2]+'"/><stop offset="1" stop-color="'+c[3]+'"/></radialGradient>'+
+  '<radialGradient id="'+id+'s" cx="50%" cy="30%" r="70%"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient></defs>'+
+  '<circle cx="50" cy="50" r="46" fill="#0b0710"/>'+
+  '<circle cx="50" cy="50" r="42" fill="url(#'+id+'i)"/>'+
+  '<g class="fib" fill="none" stroke-linecap="round">'+fib+'</g>'+
+  '<circle cx="50" cy="50" r="42" fill="none" stroke="'+c[3]+'" stroke-width="5"/>'+
+  '<circle class="pup" cx="50" cy="50" r="17" fill="#040205"/>'+
+  '<circle cx="50" cy="50" r="46" fill="url(#'+id+'s)"/>'+
+  '<rect x="27" y="22" width="20" height="15" rx="6" fill="#fff" fill-opacity=".92" transform="rotate(-18 37 29)"/>'+
+  '<circle cx="66" cy="68" r="4.5" fill="#fff" fill-opacity=".7"/>'+
+  '<path d="M18 58 A34 34 0 0 0 44 84" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="3" stroke-linecap="round"/></svg>';
+}
+function rpUpgrade(root){
+ (root||document).querySelectorAll(".perch .rv:not([data-rp])").forEach(rv => {
+  rv.setAttribute("data-rp","1"); const k = rv.dataset.rv || (rv.classList.contains("m") ? "m" : "h");
+  rv.querySelectorAll(".lyr > .act > img").forEach(img => {
+   const m = 'url('+img.getAttribute("src")+')', a = document.createElement("i"), b = document.createElement("i");
+   a.className = "barbs"; b.className = "barbs2";
+   [a,b].forEach(x => { x.style.webkitMaskImage = m; x.style.maskImage = m; });
+   img.after(a, b);
+  });
+  const eye = rv.querySelector(".eye");
+  if(eye && !eye.querySelector(".ball")){
+   const lid = eye.querySelector(".lid");
+   const ball = document.createElement("b"); ball.className = "ball"; ball.innerHTML = rpEyeSVG(k);
+   const sc = document.createElement("b"); sc.className = "scint"; sc.innerHTML = "<i></i><i></i><i></i><i></i><i></i>";
+   const ring = document.createElement("b"); ring.className = "ring";
+   eye.insertBefore(ball, lid); eye.insertBefore(ring, lid); eye.insertBefore(sc, lid);
+  }
+  const motes = rv.querySelector(".motes"); if(motes) while(motes.children.length < 18) motes.appendChild(document.createElement("b"));
+ });
+}
+new MutationObserver(() => { clearTimeout(RP._mo); RP._mo = setTimeout(()=>rpUpgrade(document), 60); }).observe(document.documentElement, {childList:true, subtree:true});
+setTimeout(()=>rpUpgrade(document), 300);
+
+// sparks thrown off a raven's wings while it flies
+function rpTrail(w, ms){
+ if(rpRM()) return;
+ const cols = w==="h" ? ["#ffd27a","#ffb02a","#fff1c2","#7ef3ff"] : ["#8fd2ff","#c49bff","#e8fbff","#9dffc8"], end = Date.now() + ms*.85;
+ document.querySelectorAll('.perch .rv.'+w).forEach(rv => {
+  const perch = rv.closest(".perch"); if(!perch) return;
+  const tick = () => { if(Date.now() > end || !rv.isConnected) return;
+   const pr = perch.getBoundingClientRect(), body = rv.querySelector(".lyr.body"); if(!body || pr.width < 40){ return; }
+   const br = body.getBoundingClientRect();
+   for(let i=0;i<2;i++){ const s = document.createElement("i"); s.className = "rvspark";
+    s.style.left = ((br.left - pr.left + br.width*(.25+Math.random()*.5))/pr.width*100).toFixed(1)+"%";
+    s.style.top = ((br.top - pr.top + br.height*(.3+Math.random()*.45))/pr.height*100).toFixed(1)+"%";
+    s.style.setProperty("--sc", cols[Math.floor(Math.random()*cols.length)]);
+    s.style.setProperty("--sx", ((Math.random()-.5)*pr.width*.12).toFixed(1)+"px"); s.style.setProperty("--sy", (pr.height*(.04+Math.random()*.12)).toFixed(1)+"px");
+    s.style.setProperty("--sd", (650+Math.random()*500).toFixed(0)+"ms"); perch.appendChild(s); setTimeout(()=>s.remove(), 1300); }
+   setTimeout(tick, 70);
+  };
+  tick();
+ });
+}
+// every flight throws sparks and shakes loose a feather or two
+if(typeof act === "function"){
+ const rpAct0 = act;
+ act = function(w, cls, ms){ rpAct0(w, cls, ms); if(RP.flights[cls]){ rpTrail(w, ms); if(typeof dropFeather === "function") setTimeout(()=>dropFeather(w, 1 + (Math.random()<.5?1:0)), ms*.3); } };
+}
+
+// ---------------- the peek: a raven flies to the glass and looks right at you ----------------
+const RP_SAY = {
+ h:["Just checking in.","Still here? Good. Keep going.","Huginn sees you. Huginn approves.","Thought you'd gone. Carry on."],
+ m:["Mm. Just checking on you.","Muninn remembers you said you'd do this.","Still working? Good. I'll tell Odin.","Watching. Always watching. Carry on."]
+};
+function rpVisiblePerch(){
+ const ps = [...document.querySelectorAll(".perch")].filter(p => { if(!p.isConnected) return false; const r = p.getBoundingClientRect(); return r.width > 60 && r.bottom > 60 && r.top < innerHeight - 60; });
+ ps.sort((a,b) => b.getBoundingClientRect().width - a.getBoundingClientRect().width); return ps[0] || null;
+}
+function rpPeekLoop(){
+ const ok = !RP.peekShown && !document.hidden && !rpRM() && (typeof splashDone === "undefined" || splashDone) && Date.now() - RP.t0 > 50000;
+ if(ok && Math.random() < .16) { const w = Math.random()<.5 ? "h" : "m"; rpPeek(w); return; }
+ setTimeout(rpPeekLoop, 22000 + Math.random()*20000);
+}
+setTimeout(rpPeekLoop, 30000);
+function rpPeek(w){
+ if(RP.peeking) return; const perch = rpVisiblePerch(); if(!perch) return;
+ const rv = perch.querySelector(".rv."+w), head = rv && rv.querySelector(".lyr.head"); if(!rv || !head) return;
+ RP.peeking = true; RP.peekShown = true; try{ sessionStorage.setItem("rpPeek","1"); }catch(e){}
+ if(typeof BUSY !== "undefined") BUSY[w] = Date.now() + 9000;
+ const pr = perch.getBoundingClientRect(), hr = head.getBoundingClientRect();
+ // 1. the raven lifts off and comes straight at the viewer
+ const fly = document.createElement("div"); fly.className = "rvfly";
+ Object.assign(fly.style, {left:pr.left+"px", top:pr.top+"px", width:pr.width+"px", height:pr.height+"px", transformOrigin:(hr.left-pr.left+hr.width*.5)+"px "+(hr.top-pr.top+hr.height*.45)+"px"});
+ const clone = rv.cloneNode(true); clone.classList.remove("hop","loop","orbit","dart","roll","swoop","look","tilt","take","flap"); clone.classList.add("hover"); clone.style.animation = "none";
+ fly.appendChild(clone); document.body.appendChild(fly); rv.style.visibility = "hidden";
+ const cx = innerWidth/2 - (hr.left + hr.width*.5), cy = innerHeight*.46 - (hr.top + hr.height*.45), S = Math.max(innerWidth, innerHeight)*1.1/hr.width;
+ const a1 = fly.animate([
+  {transform:"translate(0,0) scale(1)", filter:"blur(0px)", offset:0},
+  {transform:"translate("+(cx*.08)+"px,"+(-pr.height*.18)+"px) scale(1.15)", filter:"blur(0px)", offset:.25},
+  {transform:"translate("+(cx*.55)+"px,"+(cy*.5)+"px) scale("+(S*.18)+")", filter:"blur(1px)", offset:.62},
+  {transform:"translate("+cx+"px,"+cy+"px) scale("+S+")", filter:"blur(14px)", offset:1}
+ ], {duration:1050, easing:"cubic-bezier(.55,0,.75,.3)", fill:"forwards"});
+ // 2. the close-up: his eye fills the screen, out of focus, then the lens finds it
+ const pk = document.createElement("div"); pk.className = "rvpeek"; pk.style.setProperty("--pc", w==="h" ? "#ffb02a" : "#8fd2ff");
+ const cv = document.createElement("canvas"); pk.appendChild(cv);
+ const line = RP_SAY[w][Math.floor(Math.random()*RP_SAY[w].length)];
+ const say = document.createElement("div"); say.className = "pk-say"; say.innerHTML = "<small>"+(w==="h"?"Huginn":"Muninn")+"</small>"+line; pk.appendChild(say);
+ document.body.appendChild(pk);
+ const E = rpEyeScene(cv, w);
+ let done = false, raf = 0;
+ const finish = () => {
+  if(done) return; done = true; say.classList.remove("on");
+  pk.animate([{opacity:1, filter:"blur(0px)", transform:"scale(1)"},{opacity:0, filter:"blur(18px)", transform:"scale(1.12)"}], {duration:520, easing:"cubic-bezier(.4,0,.6,1)", fill:"forwards"});
+  setTimeout(()=>{ cancelAnimationFrame(raf); pk.remove();
+   const back = fly.animate([
+    {transform:"translate("+cx+"px,"+cy+"px) scale("+S+")", filter:"blur(14px)", opacity:1},
+    {transform:"translate("+(cx*.4)+"px,"+(cy*.3-pr.height*.3)+"px) scale("+(S*.08)+")", filter:"blur(1px)", opacity:1, offset:.55},
+    {transform:"translate(0,"+(-pr.height*.06)+"px) scale(1)", filter:"blur(0px)", opacity:1}
+   ], {duration:950, easing:"cubic-bezier(.25,.7,.35,1)", fill:"forwards"});
+   back.onfinish = () => { rv.style.visibility = ""; fly.remove(); RP.peeking = false; if(typeof act === "function") act(w, "puff", 1500); };
+  }, 480);
+ };
+ pk.addEventListener("click", finish);
+ setTimeout(()=>{
+  pk.animate([{opacity:0, filter:"blur(26px)", transform:"scale(1.18)"},{opacity:1, filter:"blur(22px)", transform:"scale(1.14)", offset:.35},{opacity:1, filter:"blur(0px)", transform:"scale(1)"}],
+   {duration:1100, easing:"cubic-bezier(.3,0,.2,1)", fill:"forwards"});
+  const T0 = performance.now();
+  const loop = now => { if(done) return; const t = (now-T0)/1000; E.draw(t); if(t > 1.5 && !say.classList.contains("on")) say.classList.add("on"); if(t > 5.2){ finish(); return; } raf = requestAnimationFrame(loop); };
+  raf = requestAnimationFrame(loop);
+ }, 900);
+}
+// The close-up: a raven's eye, painted live on a canvas at full resolution.
+function rpEyeScene(cv, w){
+ const dpr = Math.min(2, devicePixelRatio||1), W = innerWidth, H = innerHeight; cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
+ const X = cv.getContext("2d"); X.scale(dpr,dpr);
+ const R = Math.min(W, H)*.24, CX = W*.5, CY = H*.46;
+ const col = w==="h" ? {hot:"255,241,194", mid:"255,176,42", deep:"180,90,0", rim:"40,14,0", glow:"255,170,40", spark:["#fff1c2","#ffd27a","#ffb02a","#ff8a3a"]}
+                     : {hot:"232,251,255", mid:"143,210,255", deep:"42,111,208", rim:"6,22,58", glow:"110,190,255", spark:["#e8fbff","#bfe9ff","#8fd2ff","#c49bff"]};
+ const rnd = (a,b) => a + Math.random()*(b-a);
+ // --- feathers around the eye, rendered once ---
+ const bg = document.createElement("canvas"); bg.width = cv.width; bg.height = cv.height; const B = bg.getContext("2d"); B.scale(dpr,dpr);
+ let g = B.createRadialGradient(CX,CY,R*.8,CX,CY,Math.max(W,H)*.8); g.addColorStop(0,"#0d0b16"); g.addColorStop(1,"#020104"); B.fillStyle = g; B.fillRect(0,0,W,H);
+ const feathers = [];
+ for(let ring=0; ring<14; ring++){ const rr = R*(1.32 + ring*.34 + ring*ring*.02), n = Math.round(14 + ring*6);
+  for(let i=0;i<n;i++){ const a = i/n*Math.PI*2 + ring*.37 + rnd(-.08,.08); feathers.push({ring, a, x:CX + Math.cos(a)*rr, y:CY + Math.sin(a)*rr*.92, L:R*(.32 + ring*.07)*rnd(.85,1.2), Wd:R*(.13 + ring*.025)*rnd(.8,1.15)}); } }
+ feathers.sort((p,q) => q.ring - p.ring);   // outer rows first so inner rows overlap them
+ for(const f of feathers){
+  // contour feathers lie back from the beak (to the left) toward the nape (to the right)
+  const dir = Math.atan2(f.y-CY, f.x-CX)*.55 + .25 + rnd(-.12,.12);
+  B.save(); B.translate(f.x, f.y); B.rotate(dir);
+  const L = f.L, Wd = f.Wd;
+  B.beginPath(); B.moveTo(-L*.5,0); B.quadraticCurveTo(-L*.2,-Wd*.62,L*.42,-Wd*.42); B.quadraticCurveTo(L*.6,0,L*.42,Wd*.42); B.quadraticCurveTo(-L*.2,Wd*.62,-L*.5,0); B.closePath();
+  const fg = B.createLinearGradient(-L*.5,0,L*.55,0); fg.addColorStop(0,"#05040a"); fg.addColorStop(.55,"#121024"); fg.addColorStop(.9,"#1b1a3a"); fg.addColorStop(1,"#0a0814");
+  B.fillStyle = fg; B.fill();
+  // iridescent edge
+  B.strokeStyle = ["rgba(90,120,255,.35)","rgba(150,90,255,.3)","rgba(60,190,200,.25)"][Math.floor(Math.random()*3)]; B.lineWidth = Math.max(.6, Wd*.06); B.stroke();
+  // rachis and barbs
+  B.strokeStyle = "rgba(160,170,230,.14)"; B.lineWidth = Math.max(.5, Wd*.035); B.beginPath(); B.moveTo(-L*.45,0); B.lineTo(L*.48,0); B.stroke();
+  B.strokeStyle = "rgba(160,170,230,.07)"; B.lineWidth = .6;
+  for(let s=-.35;s<.42;s+=.07){ B.beginPath(); B.moveTo(L*s,0); B.lineTo(L*(s+.09),-Wd*.38); B.moveTo(L*s,0); B.lineTo(L*(s+.09),Wd*.38); B.stroke(); }
+  B.restore();
+ }
+ // bare skin around the eye: a dark, finely wrinkled ring
+ g = B.createRadialGradient(CX,CY,R*.98,CX,CY,R*1.42); g.addColorStop(0,"#000"); g.addColorStop(.35,"#17131c"); g.addColorStop(.8,"rgba(23,19,28,.6)"); g.addColorStop(1,"rgba(23,19,28,0)");
+ B.fillStyle = g; B.beginPath(); B.arc(CX,CY,R*1.42,0,6.284); B.fill();
+ B.strokeStyle = "rgba(120,110,140,.13)"; B.lineWidth = 1;
+ for(let i=0;i<46;i++){ const a = rnd(0,6.284), r0 = R*rnd(1.03,1.3); B.beginPath(); B.arc(CX,CY,r0,a,a+rnd(.15,.5)); B.stroke(); }
+ // --- the iris, rendered once at high detail ---
+ const IS = Math.round(R*2*dpr), ir = document.createElement("canvas"); ir.width = IS; ir.height = IS; const I = ir.getContext("2d"); I.scale(dpr,dpr);
+ const c = R, ri = R*.95;
+ g = I.createRadialGradient(c,c,0,c,c,ri);
+ g.addColorStop(0,"rgb("+col.hot+")"); g.addColorStop(.32,"rgb("+col.hot+")"); g.addColorStop(.48,"rgb("+col.mid+")"); g.addColorStop(.82,"rgb("+col.deep+")"); g.addColorStop(1,"rgb("+col.rim+")");
+ I.fillStyle = g; I.beginPath(); I.arc(c,c,ri,0,6.284); I.fill();
+ // radial fibres
+ I.lineCap = "round";
+ for(let i=0;i<1300;i++){ const a = rnd(0,6.284), r0 = ri*rnd(.3,.5), r1 = ri*rnd(.62,.98), bend = rnd(-.07,.07), light = Math.random()<.55;
+  I.strokeStyle = light ? "rgba("+col.hot+","+rnd(.05,.22)+")" : "rgba("+col.rim+","+rnd(.08,.3)+")"; I.lineWidth = rnd(.4,1.4);
+  I.beginPath(); I.moveTo(c+Math.cos(a)*r0, c+Math.sin(a)*r0); I.quadraticCurveTo(c+Math.cos(a+bend)*(r0+r1)/2, c+Math.sin(a+bend)*(r0+r1)/2, c+Math.cos(a+bend*.5)*r1, c+Math.sin(a+bend*.5)*r1); I.stroke(); }
+ // crypts: dark lacy hollows in the mid-iris
+ for(let i=0;i<54;i++){ const a = rnd(0,6.284), r = ri*rnd(.52,.82), sz = ri*rnd(.025,.07);
+  I.save(); I.translate(c+Math.cos(a)*r, c+Math.sin(a)*r); I.rotate(a); I.fillStyle = "rgba("+col.rim+","+rnd(.25,.5)+")"; I.beginPath(); I.ellipse(0,0,sz*1.8,sz,0,0,6.284); I.fill();
+  I.strokeStyle = "rgba("+col.hot+",.18)"; I.lineWidth = .7; I.stroke(); I.restore(); }
+ // collarette: the bright zig-zag ring around the pupil
+ I.strokeStyle = "rgba("+col.hot+",.65)"; I.lineWidth = Math.max(1, ri*.012); I.beginPath();
+ for(let i=0;i<=96;i++){ const a = i/96*6.284, r = ri*(.47 + (i%2 ? .035 : -.015) + Math.sin(i*1.7)*.012); const x = c+Math.cos(a)*r, y = c+Math.sin(a)*r; i ? I.lineTo(x,y) : I.moveTo(x,y); } I.stroke();
+ // limbal ring
+ I.strokeStyle = "rgba("+col.rim+",.95)"; I.lineWidth = ri*.07; I.beginPath(); I.arc(c,c,ri*.965,0,6.284); I.stroke();
+ I.strokeStyle = "rgba("+col.mid+",.25)"; I.lineWidth = ri*.012; I.beginPath(); I.arc(c,c,ri*.92,0,6.284); I.stroke();
+ // sparkles that live at the rim
+ const sparks = []; for(let i=0;i<38;i++) sparks.push({a:rnd(0,6.284), r:rnd(.82,1.22), s:rnd(.012,.04), ph:rnd(0,6.284), sp:rnd(2,5.5), c:col.spark[Math.floor(Math.random()*col.spark.length)]});
+ const star = (x,y,s,a,color) => { X.save(); X.translate(x,y); X.globalAlpha = a; const g2 = X.createRadialGradient(0,0,0,0,0,s*3); g2.addColorStop(0,"#fff"); g2.addColorStop(.25,color); g2.addColorStop(1,"rgba(0,0,0,0)");
+  X.fillStyle = g2; X.beginPath(); X.arc(0,0,s*3,0,6.284); X.fill(); X.fillStyle = "#fff"; X.beginPath(); X.moveTo(0,-s*5); X.lineTo(s*.35,-s*.35); X.lineTo(s*5,0); X.lineTo(s*.35,s*.35); X.lineTo(0,s*5); X.lineTo(-s*.35,s*.35); X.lineTo(-s*5,0); X.lineTo(-s*.35,-s*.35); X.closePath(); X.fill(); X.restore(); };
+ // gaze: little darts, then a long look straight at you
+ const gaze = t => { const k = [[0,0,0],[1.1,-.16,.04],[1.7,-.16,.04],[2.0,.14,-.03],[2.6,.14,-.03],[2.9,0,0],[9,0,0]]; let i = 0; while(i < k.length-2 && t > k[i+1][0]) i++;
+  const [t0,x0,y0] = k[i], [t1,x1,y1] = k[i+1], u = Math.min(1, Math.max(0,(t-t0)/Math.min(.12, t1-t0))); const e = u*u*(3-2*u); return [x0+(x1-x0)*e, y0+(y1-y0)*e]; };
+ const draw = t => {
+  X.setTransform(dpr,0,0,dpr,0,0); X.clearRect(0,0,W,H);
+  // a little head motion: breathing drift and a curious tilt
+  const tilt = Math.sin(t*.9)*.025 + (t > 3.2 ? Math.min(1,(t-3.2)/.4)*.06 : 0), drift = Math.sin(t*1.3)*R*.015;
+  X.save(); X.translate(CX, CY+drift); X.rotate(tilt); X.scale(1 + t*.006, 1 + t*.006); X.translate(-CX, -CY);
+  X.drawImage(bg, 0, 0, W, H);
+  // the eyeball
+  X.save(); X.beginPath(); X.arc(CX,CY,R,0,6.284); X.clip();
+  X.fillStyle = "#050308"; X.fillRect(CX-R,CY-R,R*2,R*2);
+  const [gx, gy] = gaze(t), ix = CX + gx*R - R, iy = CY + gy*R - R;
+  X.drawImage(ir, ix, iy, R*2, R*2);
+  // inner fire: the iris glows from within and breathes
+  X.globalCompositeOperation = "lighter";
+  let gg = X.createRadialGradient(ix+R, iy+R, R*.3, ix+R, iy+R, R*.95); const pulse = .28 + .12*Math.sin(t*2.6) + .06*Math.sin(t*7.3);
+  gg.addColorStop(0,"rgba("+col.glow+","+pulse+")"); gg.addColorStop(1,"rgba("+col.glow+",0)"); X.fillStyle = gg; X.fillRect(CX-R,CY-R,R*2,R*2);
+  X.globalCompositeOperation = "source-over";
+  // the pupil: snaps tight as the lens finds you, then opens wide with curiosity
+  const pr = R*(t < 1 ? .42 - t*.16 : t < 2.9 ? .26 + Math.sin(t*1.5)*.012 : .26 + Math.min(1,(t-2.9)/.6)*.14);
+  gg = X.createRadialGradient(ix+R, iy+R, pr*.85, ix+R, iy+R, pr*1.08); gg.addColorStop(0,"#020103"); gg.addColorStop(1,"rgba(2,1,3,0)");
+  X.fillStyle = gg; X.beginPath(); X.arc(ix+R, iy+R, pr*1.08, 0, 6.284); X.fill();
+  // the lid's shadow and the dome's shading
+  gg = X.createLinearGradient(0, CY-R, 0, CY+R); gg.addColorStop(0,"rgba(0,0,0,.6)"); gg.addColorStop(.28,"rgba(0,0,0,0)"); gg.addColorStop(.85,"rgba(0,0,0,0)"); gg.addColorStop(1,"rgba(0,0,0,.45)"); X.fillStyle = gg; X.fillRect(CX-R,CY-R,R*2,R*2);
+  gg = X.createRadialGradient(CX,CY,R*.7,CX,CY,R); gg.addColorStop(0,"rgba(0,0,0,0)"); gg.addColorStop(1,"rgba(0,0,0,.55)"); X.fillStyle = gg; X.fillRect(CX-R,CY-R,R*2,R*2);
+  // nictitating membrane: a pale third eyelid that sweeps across and back, the way a raven's does
+  const nm = t > 2.1 && t < 2.55 ? Math.sin((t-2.1)/.45*Math.PI) : 0;
+  if(nm > 0){ const edge = CX - R + nm*R*2.2;
+   gg = X.createLinearGradient(edge - R*.6, 0, edge, 0); gg.addColorStop(0,"rgba(200,215,235,.55)"); gg.addColorStop(.85,"rgba(215,228,245,.62)"); gg.addColorStop(1,"rgba(240,248,255,.85)");
+   X.fillStyle = gg; X.beginPath(); X.moveTo(CX-R*1.1, CY-R); X.lineTo(edge - R*.08, CY-R); X.quadraticCurveTo(edge + R*.12, CY, edge - R*.08, CY+R); X.lineTo(CX-R*1.1, CY+R); X.closePath(); X.fill(); }
+  // wet cornea: a window-shaped catchlight, a small second light, and a rim of reflected sky
+  X.fillStyle = "rgba(255,255,255,.9)"; X.save(); X.translate(CX - R*.38, CY - R*.42); X.rotate(-.32);
+  X.beginPath(); if(X.roundRect) X.roundRect(-R*.17, -R*.11, R*.34, R*.22, R*.07); else X.rect(-R*.17, -R*.11, R*.34, R*.22); X.fill();
+  X.fillStyle = "rgba(20,20,40,.35)"; X.fillRect(-R*.01, -R*.11, R*.02, R*.22); X.fillRect(-R*.17, -R*.01, R*.34, R*.02); X.restore();
+  X.fillStyle = "rgba(255,255,255,.55)"; X.beginPath(); X.arc(CX + R*.36, CY + R*.4, R*.045, 0, 6.284); X.fill();
+  X.strokeStyle = "rgba(170,200,255,.18)"; X.lineWidth = R*.035; X.beginPath(); X.arc(CX, CY, R*.9, 2.1, 3.0); X.stroke();
+  X.restore();
+  // scintillation: sparks twinkling at the rim, slow rays and a passing anamorphic flare
+  X.globalCompositeOperation = "lighter";
+  X.save(); X.translate(CX, CY); X.rotate(t*.18);
+  for(let i=0;i<12;i++){ const a = i/12*6.284; const L = R*(1.55 + .25*Math.sin(t*1.7 + i)); const al = .05 + .05*Math.sin(t*2.3 + i*1.9);
+   gg = X.createLinearGradient(0,0,Math.cos(a)*L,Math.sin(a)*L); gg.addColorStop(0,"rgba("+col.glow+",0)"); gg.addColorStop(.6,"rgba("+col.glow+","+al+")"); gg.addColorStop(1,"rgba("+col.glow+",0)");
+   X.strokeStyle = gg; X.lineWidth = R*.035; X.beginPath(); X.moveTo(Math.cos(a)*R*.95, Math.sin(a)*R*.95); X.lineTo(Math.cos(a)*L, Math.sin(a)*L); X.stroke(); }
+  X.restore();
+  for(const s of sparks){ const a = Math.max(0, Math.sin(t*s.sp + s.ph)); if(a < .05) continue;
+   star(CX + Math.cos(s.a + t*.05)*R*s.r, CY + Math.sin(s.a + t*.05)*R*s.r, R*s.s, a*.9, s.c); }
+  const fl = (t % 3.4)/3.4; if(fl > .55 && fl < .8){ const k = Math.sin((fl-.55)/.25*Math.PI);
+   gg = X.createLinearGradient(CX - R*3, 0, CX + R*3, 0); gg.addColorStop(0,"rgba("+col.glow+",0)"); gg.addColorStop(.45,"rgba("+col.glow+","+(.25*k)+")"); gg.addColorStop(.5,"rgba(255,255,255,"+(.55*k)+")"); gg.addColorStop(.55,"rgba("+col.glow+","+(.25*k)+")"); gg.addColorStop(1,"rgba("+col.glow+",0)");
+   X.fillStyle = gg; X.fillRect(CX - R*3, CY - R*.4 - R*.012, R*6, R*.024); }
+  // soft bloom around the whole eye
+  gg = X.createRadialGradient(CX,CY,R*.9,CX,CY,R*1.9); gg.addColorStop(0,"rgba("+col.glow+","+(.1 + .04*Math.sin(t*2.6))+")"); gg.addColorStop(1,"rgba("+col.glow+",0)");
+  X.fillStyle = gg; X.beginPath(); X.arc(CX,CY,R*1.9,0,6.284); X.fill();
+  X.globalCompositeOperation = "source-over";
+  X.restore();
+  // vignette, like a lens pressed close
+  gg = X.createRadialGradient(W/2,H/2,Math.min(W,H)*.3,W/2,H/2,Math.max(W,H)*.75); gg.addColorStop(0,"rgba(0,0,0,0)"); gg.addColorStop(1,"rgba(0,0,0,.7)"); X.fillStyle = gg; X.fillRect(0,0,W,H);
+ };
+ draw(0);
+ return {draw};
+}
+window.rvPeek = w => rpPeek(w || (Math.random()<.5 ? "h" : "m"));
+window.rvAct = (w, cls, ms) => { if(typeof act === "function") act(w, cls, ms || RP.flights[cls] || 1600); };
+
 })();
 </script>
 
