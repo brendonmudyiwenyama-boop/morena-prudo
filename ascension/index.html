@@ -809,6 +809,8 @@ body.splashing .perch *,body.splashing .kd *{animation-play-state:paused!importa
  transition:opacity 1.1s cubic-bezier(.33,0,.2,1),filter 1.3s cubic-bezier(.33,0,.2,1),transform 2.6s cubic-bezier(.22,1,.36,1)}
 .sk-splash.lit .sk-vid{opacity:1;filter:none;transform:none}
 .sk-splash.revealing .sk-vid{opacity:.001;transition:none}
+.sk-splash.whip .sk-vid{transition:none;will-change:filter,transform}
+.sk-splash.whip .sk-veil,.sk-splash.whip .sk-skip{opacity:0;transition:opacity .25s}
 .sk-veil{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;
  background:radial-gradient(ellipse 62% 52% at 50% 44%,transparent 55%,rgba(0,0,0,.55) 100%)}
 .sk-splash.revealing .sk-veil{opacity:0;transition:opacity .3s}
@@ -894,7 +896,7 @@ body.splashing .perch *,body.splashing .kd *{animation-play-state:paused!importa
 .eye .ball .pup{transform-origin:50% 50%;animation:ePup 5.8s var(--ez) infinite}
 .rv.m .eye .ball .pup{animation-duration:6.6s;animation-delay:-2.2s}
 @keyframes ePup{0%,100%{transform:scale(1)}40%{transform:scale(.78)}55%{transform:scale(.8)}80%{transform:scale(1.08)}}
-.eye .ball .fib{transform-origin:50% 50%;animation:eSpin 26s linear infinite;opacity:.9}
+.eye .ball .fib{opacity:.9}
 .rv.m .eye .ball .fib{animation-direction:reverse;animation-duration:31s}
 .eye .halo{opacity:calc(var(--eg)*.9)}
 .eye .glow{inset:-40%;opacity:.55;z-index:1}
@@ -1816,43 +1818,37 @@ function runSplash(){
 // He starts to turn, then whips round faster than the eye can follow: the frame smears into motion blur,
 // streaks tear across the dark, and a bright edge wipes the screen in the direction he turned, uncovering the Log.
 function skWhip(v, dir){
+ // No canvas copy of the video here: iOS can hand back black frames for that. The real video stays on screen,
+ // gets a CSS motion blur + stretch as he whips round, and the splash itself is clipped away to reveal the Log.
  const sp = document.getElementById("splash"), c = document.getElementById("skSmoke");
- const dpr = Math.min(1.5, devicePixelRatio||1), W = innerWidth, H = innerHeight;
+ const dpr = Math.min(2, devicePixelRatio||1), W = innerWidth, H = innerHeight;
  c.width = Math.round(W*dpr); c.height = Math.round(H*dpr); const X = c.getContext("2d"); X.setTransform(dpr,0,0,dpr,0,0);
- const vw = v.videoWidth||1080, vh = v.videoHeight||1936, sc = Math.min(W/vw, H/vh), dw = vw*sc, dh = vh*sc, dx = (W-dw)/2, dy = (H-dh)*.42;
- try{ v.playbackRate = 3.2; }catch(e){}                       // the turn itself, sped up
- sp.classList.add("revealing");                                 // the canvas takes over drawing him
- const T0 = performance.now(), WHIP = 430, WIPE = 620, WIPE_AT = 300;
- const streaks = []; for(let i=0;i<26;i++) streaks.push({y:Math.random()*H, l:W*(.25+Math.random()*.6), w:.6+Math.random()*2.2, s:.6+Math.random()*.9, o:Math.random(), a:.15+Math.random()*.4});
+ try{ v.playbackRate = 2.2; }catch(e){}
+ sp.classList.add("whip");
+ const T0 = performance.now(), WHIP = 420, WIPE_AT = 280, WIPE = 640;
+ const streaks = []; for(let i=0;i<22;i++) streaks.push({y:Math.random()*H, l:W*(.25+Math.random()*.6), w:.6+Math.random()*2, s:.6+Math.random()*.9, o:Math.random(), a:.12+Math.random()*.32});
  const easeIn = x => x*x*x, easeIO = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
+ const clip = val => { sp.style.clipPath = val; sp.style.webkitClipPath = val; };
  const frame = now => {
   if(splashDone) return;
-  const t = now - T0, kw = Math.min(1, t/WHIP), kp = Math.max(0, Math.min(1, (t-WIPE_AT)/WIPE));
-  X.globalCompositeOperation = "source-over"; X.globalAlpha = 1; X.fillStyle = "#000"; X.fillRect(0,0,W,H);
-  // motion blur: the same frame laid down many times along the direction of the turn, averaged together
-  const blur = W*(.02 + .2*easeIn(kw)) * (1 - kp*.4), n = 11, stretch = 1 + .07*easeIn(kw);
-  X.globalCompositeOperation = "lighter"; X.globalAlpha = 1/n;
-  for(let i=0;i<n;i++){ const o = dir*blur*(i/(n-1) - .35); try{ X.drawImage(v, dx + o - dw*(stretch-1)/2, dy, dw*stretch, dh); }catch(e){} }
-  X.globalAlpha = 1;
-  // speed streaks tearing across the dark
-  for(const s of streaks){ const p = ((s.o + t/1000*s.s*3*dir) % 1 + 1) % 1, x = dir>0 ? -s.l + p*(W+s.l*2) : W + s.l - p*(W+s.l*2), a = s.a*easeIn(kw)*(1-kp);
+  const t = now - T0, kw = Math.min(1, t/WHIP), kp = Math.max(0, Math.min(1, (t-WIPE_AT)/WIPE)), e = easeIn(kw);
+  v.style.filter = "blur(" + (e*14).toFixed(1) + "px) brightness(" + (1 + e*.25).toFixed(2) + ")";
+  v.style.transform = "translateX(" + (dir*W*.06*e).toFixed(1) + "px) scaleX(" + (1 + .14*e).toFixed(3) + ")";
+  X.clearRect(0,0,W,H);
+  X.globalCompositeOperation = "lighter";
+  for(const s of streaks){ const p = ((s.o + t/1000*s.s*3*dir) % 1 + 1) % 1, x = dir>0 ? -s.l + p*(W+s.l*2) : W + s.l - p*(W+s.l*2), a = s.a*e;
    if(a < .01) continue; const g = X.createLinearGradient(x, 0, x + dir*s.l, 0); g.addColorStop(0,"rgba(255,235,200,0)"); g.addColorStop(.7,"rgba(255,235,200,"+a+")"); g.addColorStop(1,"rgba(255,255,255,0)");
    X.fillStyle = g; X.fillRect(Math.min(x, x+dir*s.l), s.y, s.l, s.w); }
-  X.globalCompositeOperation = "source-over";
-  // the wipe: everything behind the edge is cut away, revealing the Log
   if(kp > 0){
-   const e = easeIO(kp), front = dir>0 ? -W*.15 + W*1.4*e : W*1.15 - W*1.4*e, soft = W*.06;
-   X.globalCompositeOperation = "destination-out";
-   const g = X.createLinearGradient(front - dir*soft, 0, front, 0); g.addColorStop(0,"rgba(0,0,0,1)"); g.addColorStop(1,"rgba(0,0,0,0)");
-   X.fillStyle = "#000"; if(dir>0) X.fillRect(0,0,Math.max(0,front-soft),H); else X.fillRect(Math.min(W,front+soft),0,W,H);
-   X.fillStyle = g; X.fillRect(Math.min(front, front-dir*soft), 0, soft, H);
-   // the leading edge: a hot streak of light riding the wipe
-   X.globalCompositeOperation = "lighter";
-   const eg = X.createLinearGradient(front - dir*W*.12, 0, front + dir*W*.02, 0); eg.addColorStop(0,"rgba(255,190,90,0)"); eg.addColorStop(.75,"rgba(255,200,120,"+(.55*(1-kp*.6))+")"); eg.addColorStop(.95,"rgba(255,250,235,"+(.9*(1-kp*.5))+")"); eg.addColorStop(1,"rgba(255,255,255,0)");
-   X.fillStyle = eg; X.fillRect(Math.min(front - dir*W*.12, front + dir*W*.02), 0, W*.14, H);
-   X.globalCompositeOperation = "source-over";
+   const front = dir>0 ? -W*.05 + W*1.25*easeIO(kp) : W*1.05 - W*1.25*easeIO(kp), f = Math.max(0, Math.min(W, front));
+   clip(dir>0 ? "inset(0 0 0 " + f.toFixed(1) + "px)" : "inset(0 " + (W-f).toFixed(1) + "px 0 0)");
+   // hot leading edge riding just ahead of the cut
+   const gw = W*.12, eg = X.createLinearGradient(front, 0, front + dir*gw, 0);
+   eg.addColorStop(0,"rgba(255,250,235,"+(.95*(1-kp*.4))+")"); eg.addColorStop(.18,"rgba(255,200,120,"+(.6*(1-kp*.5))+")"); eg.addColorStop(1,"rgba(255,170,80,0)");
+   X.fillStyle = eg; X.fillRect(Math.min(front, front+dir*gw), 0, gw, H);
   }
-  if(t >= WIPE_AT + WIPE + 60){ X.clearRect(0,0,W,H); endSplash(); return; }
+  X.globalCompositeOperation = "source-over";
+  if(t >= WIPE_AT + WIPE + 40){ endSplash(); return; }
   skRAF = requestAnimationFrame(frame);
  };
  skRAF = requestAnimationFrame(frame);
@@ -2392,7 +2388,7 @@ function speak(w){
 }
 function sayLoop(){ if(!document.hidden && splashDone && !rbusy(sayTurn) && speak(sayTurn)) sayTurn = sayTurn==="h"?"m":"h"; setTimeout(sayLoop, 11000 + Math.random()*8000); }
 function idleLoop(){
- const moves = [["h","preen",2200],["m","preen",2200],["h","puff",1500],["m","puff",1500],["h","shake",800],["m","shake",800],["h","flap",1600],["m","flap",1600],["feather"],["h","cawing",950],["m","cawing",950],["h","look",2600],["m","look",2600],["h","tilt",2000],["m","tilt",2000],["h","take",1100],["m","take",1100],["h","hop",1900],["m","hop",1900],["h","loop",2200],["m","loop",2200],["h","orbit",2600],["m","orbit",2600],["h","dart",2400],["m","dart",2400],["h","roll",1800],["m","roll",1800],["h","hover",1700],["m","hover",1700],["h","swoop",2000],["m","swoop",2000]];
+ const moves = [["h","preen",2200],["m","preen",2200],["h","puff",1500],["m","puff",1500],["h","shake",800],["m","shake",800],["h","flap",1600],["m","flap",1600],["feather"],["h","cawing",950],["m","cawing",950],["h","look",2600],["m","look",2600],["h","tilt",2000],["m","tilt",2000],["h","take",1100],["m","take",1100],["h","hop",1900],["m","hop",1900]];
  if(!document.hidden && splashDone && perchOnScreen()){ const m = moves[Math.floor(Math.random()*moves.length)];
   if(m[0]==="feather") dropFeather(Math.random()<.5?"h":"m", 1+Math.floor(Math.random()*2));
   else if(!rbusy(m[0])){ act(m[0],m[1],m[2]); if(m[1]==="flap"||m[1]==="hop") dropFeather(m[0],2); else if(m[1]==="puff"||m[1]==="shake") setTimeout(()=>dropFeather(m[0],1),400); } }
@@ -2597,8 +2593,7 @@ function rpUpgrade(root){
    const lid = eye.querySelector(".lid");
    const ball = document.createElement("b"); ball.className = "ball"; ball.innerHTML = rpEyeSVG(k);
    const sc = document.createElement("b"); sc.className = "scint"; sc.innerHTML = "<i></i><i></i><i></i><i></i><i></i>";
-   const ring = document.createElement("b"); ring.className = "ring";
-   eye.insertBefore(ball, lid); eye.insertBefore(ring, lid); eye.insertBefore(sc, lid);
+   eye.insertBefore(ball, lid); eye.insertBefore(sc, lid);
   }
   const motes = rv.querySelector(".motes"); if(motes) while(motes.children.length < 18) motes.appendChild(document.createElement("b"));
  });
@@ -2646,7 +2641,7 @@ function rpPeekLoop(){
  if(ok && Math.random() < .16) { const w = Math.random()<.5 ? "h" : "m"; rpPeek(w); return; }
  setTimeout(rpPeekLoop, 22000 + Math.random()*20000);
 }
-setTimeout(rpPeekLoop, 30000);
+/* peek paused until it is redone */
 function rpPeek(w){
  if(RP.peeking) return; const perch = rpVisiblePerch(); if(!perch) return;
  const rv = perch.querySelector(".rv."+w), head = rv && rv.querySelector(".lyr.head"); if(!rv || !head) return;

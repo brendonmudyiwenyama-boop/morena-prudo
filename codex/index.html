@@ -477,7 +477,7 @@ body.splashing .perch,body.splashing .perch *,body.splashing .gly *{animation-pl
 .eye .ball .pup{transform-origin:50% 50%;animation:ePup 5.8s var(--ez) infinite}
 .rv.m .eye .ball .pup{animation-duration:6.6s;animation-delay:-2.2s}
 @keyframes ePup{0%,100%{transform:scale(1)}40%{transform:scale(.78)}55%{transform:scale(.8)}80%{transform:scale(1.08)}}
-.eye .ball .fib{transform-origin:50% 50%;animation:eSpin 26s linear infinite;opacity:.9}
+.eye .ball .fib{opacity:.9}
 .rv.m .eye .ball .fib{animation-direction:reverse;animation-duration:31s}
 .eye .halo{opacity:calc(var(--eg)*.9)}
 .eye .glow{inset:-40%;opacity:.55;z-index:1}
@@ -1399,7 +1399,7 @@ function sayLoop(){
 }
 function idleLoop(){
  const moves = [["h","preen",2200],["m","preen",2200],["h","puff",1500],["m","puff",1500],["h","shake",800],["m","shake",800],["h","flap",1600],["m","flap",1600],["feather"],["h","cawing",950],["m","cawing",950],
-  ["h","look",2600],["m","look",2600],["h","tilt",2000],["m","tilt",2000],["h","take",1100],["m","take",1100],["h","hop",1900],["m","hop",1900],["h","loop",2200],["m","loop",2200],["h","orbit",2600],["m","orbit",2600],["h","dart",2400],["m","dart",2400],["h","roll",1800],["m","roll",1800],["h","hover",1700],["m","hover",1700],["h","swoop",2000],["m","swoop",2000]];
+  ["h","look",2600],["m","look",2600],["h","tilt",2000],["m","tilt",2000],["h","take",1100],["m","take",1100],["h","hop",1900],["m","hop",1900]];
  if(!document.hidden && splashDone){ const m = moves[Math.floor(Math.random()*moves.length)];
   if(m[0]==="feather") dropFeather(Math.random()<.5?"h":"m", 1+Math.floor(Math.random()*2));
   else if(!busy(m[0])){ act(m[0],m[1],m[2]); if(m[1]==="flap"||m[1]==="hop") dropFeather(m[0], 2); else if(m[1]==="puff"||m[1]==="shake") setTimeout(()=>dropFeather(m[0],1),400); } }
@@ -2112,8 +2112,7 @@ function rpUpgrade(root){
    const lid = eye.querySelector(".lid");
    const ball = document.createElement("b"); ball.className = "ball"; ball.innerHTML = rpEyeSVG(k);
    const sc = document.createElement("b"); sc.className = "scint"; sc.innerHTML = "<i></i><i></i><i></i><i></i><i></i>";
-   const ring = document.createElement("b"); ring.className = "ring";
-   eye.insertBefore(ball, lid); eye.insertBefore(ring, lid); eye.insertBefore(sc, lid);
+   eye.insertBefore(ball, lid); eye.insertBefore(sc, lid);
   }
   const motes = rv.querySelector(".motes"); if(motes) while(motes.children.length < 18) motes.appendChild(document.createElement("b"));
  });
@@ -2161,7 +2160,7 @@ function rpPeekLoop(){
  if(ok && Math.random() < .16) { const w = Math.random()<.5 ? "h" : "m"; rpPeek(w); return; }
  setTimeout(rpPeekLoop, 22000 + Math.random()*20000);
 }
-setTimeout(rpPeekLoop, 30000);
+/* peek paused until it is redone */
 function rpPeek(w){
  if(RP.peeking) return; const perch = rpVisiblePerch(); if(!perch) return;
  const rv = perch.querySelector(".rv."+w), head = rv && rv.querySelector(".lyr.head"); if(!rv || !head) return;
