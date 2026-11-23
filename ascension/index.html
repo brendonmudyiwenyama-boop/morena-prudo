@@ -1774,7 +1774,7 @@ function bkEmbers(){
 // Each clip: src, and dir = which way his sweep travels across the screen (1 = left to right, -1 = right to left).
 // The speed-up is baked into the clip file itself (turn sped up, arm sweep slowed), so nothing depends on playbackRate or seeking, which iOS handles unreliably. sweepAt = seconds before the end where the blur starts (just as he begins to turn); turnEnd = seconds before the end where he has his back to us and the arm sweep (and the wipe) begins. dir = the way his hand sweeps (-1 = toward screen-left). Add more moods here and one is picked at random.
 const SK_CLIPS = [
- {id:"cocky", src:"intro/skullius_whip.mp4", dir:-1, sweepAt:1.06, turnEnd:.68}
+ {id:"cocky", src:"intro/skullius_whip.mp4", dir:-1, smokeDir:1, sweepAt:1.06, turnEnd:.68}
 ];
 let skRAF = 0;
 function skPick(){
@@ -1866,7 +1866,7 @@ function skWhip(v, clip){
     if(a < .01) continue; const g = X.createLinearGradient(x, 0, x + dir*s.l, 0); g.addColorStop(0,"rgba(255,235,200,0)"); g.addColorStop(.7,"rgba(255,235,200,"+a+")"); g.addColorStop(1,"rgba(255,255,255,0)");
     X.fillStyle = g; X.fillRect(Math.min(x, x+dir*s.l), s.y, s.l, s.w); }
    X.globalCompositeOperation = "source-over";
-   if(k >= 1){ phase = 2; T1 = now; v.style.filter = ""; v.style.transform = ""; }
+   if(k >= 1){ v.style.filter = ""; v.style.transform = ""; X.clearRect(0,0,W,H); sp.classList.remove("whip"); skDispel(v, clip.smokeDir || 1); return; }   // turn landed: his sweep dispels the darkness as smoke, like before
   } else {
    // his arm sweeps out toward screen-left: the darkness is dragged away in the same direction, the edge riding his hand
    const kp = Math.min(1, (now - T1) / WIPE), e = easeIO(kp);
