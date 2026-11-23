@@ -1774,7 +1774,7 @@ function bkEmbers(){
 // Each clip: src, and dir = which way his sweep travels across the screen (1 = left to right, -1 = right to left).
 // The warp (speed-up, motion blur, streaks) is baked into the clip frames, so it plays identically on every device. sweepAt = seconds before the end where the smoke dispel begins: after his arm sweep has played out natively (hiding a still-playing video makes iOS stutter it). dir = the way his hand sweeps (-1 = toward screen-left). Add more moods here and one is picked at random.
 const SK_CLIPS = [
- {id:"cocky", src:"intro/skullius_whip.mp4", smokeDir:1, sweepAt:.06, capOff:.62}
+ {id:"cocky", src:"intro/skullius_whip.mp4", smokeDir:1, sweepAt:.12, capOff:.62}
 ];
 let skRAF = 0;
 function skPick(){
@@ -1849,7 +1849,7 @@ function skDispel(v, dir){
  // where the video actually sits on screen (object-fit: contain)
  const vw = v.videoWidth||716, vh = v.videoHeight||1284, sc = Math.min(W/vw, H/vh), dw = vw*sc, dh = vh*sc, dx = (W-dw)/2, dy = (H-dh)*.42;
  let shown = false;   // the live video is only hidden once the canvas has painted its first frame over it, so there is never a blank frame
- const T0 = performance.now(), DUR = 1750;
+ const T0 = performance.now(), DUR = 900;
  const holes = [], wisps = [];
  const ease = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
  const R = () => Math.random();
@@ -1860,8 +1860,8 @@ function skDispel(v, dir){
   // new holes along the advancing front, scattered top to bottom
   const step = Math.abs(front-lastFront), n = Math.min(8, Math.ceil(step/6)+2);
   for(let i=0;i<n;i++){ const fx = lastFront + (front-lastFront)*(i/n) - dir*R()*W*.12;
-   holes.push({x:fx, y:R()*H*1.1-H*.05, r:W*(.06+R()*.1), g:1.9+R()*1.6, t:now, life:520+R()*500});
-   if(R()<.35) wisps.push({x:fx+dir*W*.04, y:R()*H, r:W*(.08+R()*.14), vx:dir*(1.2+R()*2.4), vy:-(.2+R()*.9), t:now, life:650+R()*450, a:.10+R()*.12, s:R()*6.28}); }
+   holes.push({x:fx, y:R()*H*1.1-H*.05, r:W*(.06+R()*.1), g:1.9+R()*1.6, t:now, life:380+R()*320});
+   if(k<.7 && R()<.35) wisps.push({x:fx+dir*W*.04, y:R()*H, r:W*(.08+R()*.14), vx:dir*(1.2+R()*2.4), vy:-(.2+R()*.9), t:now, life:450+R()*300, a:.10+R()*.12, s:R()*6.28}); }
   lastFront = front;
   // erase mask: soft holes that keep spreading, like smoke thinning out
   M.clearRect(0,0,W,H);
@@ -1871,7 +1871,7 @@ function skDispel(v, dir){
    if(a>=1 && (dir>0 ? h.x+r < front-W*.35 : h.x-r > front+W*.35)){ holes.splice(i,1); continue; }   // already inside the cleared band
    const g = M.createRadialGradient(h.x,h.y,0,h.x,h.y,r); g.addColorStop(0,"rgba(0,0,0,"+(.55+.45*a)+")"); g.addColorStop(.6,"rgba(0,0,0,"+(.35*a+.15)+")"); g.addColorStop(1,"rgba(0,0,0,0)");
    M.fillStyle = g; M.beginPath(); M.arc(h.x,h.y,r,0,6.284); M.fill(); }
-  if(k>=1){ const tail = Math.min(1,(now-T0-DUR)/450); M.fillStyle="rgba(0,0,0,"+tail+")"; M.fillRect(0,0,W,H); }
+  if(k>=1){ const tail = Math.min(1,(now-T0-DUR)/220); M.fillStyle="rgba(0,0,0,"+tail+")"; M.fillRect(0,0,W,H); }
   // the darkness itself: black field + the live video frame
   X.globalCompositeOperation = "source-over"; X.clearRect(0,0,W,H);
   X.fillStyle = "#000"; X.fillRect(0,0,W,H);
@@ -1884,8 +1884,8 @@ function skDispel(v, dir){
    const x = w.x + w.vx*(now-w.t)/16 + Math.sin(w.s+a*4)*W*.015, y = w.y + w.vy*(now-w.t)/16, r = w.r*(1+a*1.6), al = w.a*Math.sin(Math.PI*a);
    const g = X.createRadialGradient(x,y,0,x,y,r); g.addColorStop(0,"rgba(18,18,24,"+al+")"); g.addColorStop(.5,"rgba(30,30,38,"+al*.55+")"); g.addColorStop(1,"rgba(40,40,50,0)");
    X.fillStyle = g; X.beginPath(); X.arc(x,y,r,0,6.284); X.fill(); }
-  if(k>=1 && now-T0-DUR > 650 && !wisps.length){ X.clearRect(0,0,W,H); endSplash(); return; }
-  if(k>=1 && now-T0-DUR > 1400){ endSplash(); return; }
+  if(k>=1 && now-T0-DUR > 200 && !wisps.length){ X.clearRect(0,0,W,H); endSplash(); return; }
+  if(k>=1 && now-T0-DUR > 300){ endSplash(); return; }
   skRAF = requestAnimationFrame(frame);
  };
  skRAF = requestAnimationFrame(frame);
