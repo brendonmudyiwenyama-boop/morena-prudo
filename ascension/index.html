@@ -1772,9 +1772,9 @@ function bkEmbers(){
 }
 // ---------- Skullius opening ----------
 // Each clip: src, and dir = which way his sweep travels across the screen (1 = left to right, -1 = right to left).
-// The speed-up is baked into the clip file itself (turn sped up, arm sweep slowed), so nothing depends on playbackRate or seeking, which iOS handles unreliably. sweepAt = seconds before the end where the blur starts (just as he begins to turn); turnEnd = seconds before the end where he has his back to us and the arm sweep (and the wipe) begins. dir = the way his hand sweeps (-1 = toward screen-left). Add more moods here and one is picked at random.
+// The warp (speed-up, motion blur, streaks) is baked into the clip frames, so it plays identically on every device. sweepAt = seconds before the end where he has finished turning and his arm sweep starts: the smoke dispel begins there. dir = the way his hand sweeps (-1 = toward screen-left). Add more moods here and one is picked at random.
 const SK_CLIPS = [
- {id:"cocky", src:"intro/skullius_whip.mp4", dir:-1, smokeDir:1, sweepAt:.725, turnEnd:.385}
+ {id:"cocky", src:"intro/skullius_whip.mp4", smokeDir:1, sweepAt:.33, capOff:.7}
 ];
 let skRAF = 0;
 function skPick(){
@@ -1804,6 +1804,7 @@ function runSplash(){
   const watch = () => {
    if(splashDone) return;
    const dur = v.duration || 4;
+   if(clip.capOff && v.currentTime >= dur - clip.capOff && t.classList.contains("on")){ t.classList.remove("on"); t.classList.add("off"); }   // caption clears as the warp starts
    if(!revealing && v.currentTime >= dur - clip.sweepAt){ revealing = true; t.classList.remove("on"); t.classList.add("off"); skWhip(v, clip); return; }
    skRAF = requestAnimationFrame(watch);
   };
@@ -1838,53 +1839,7 @@ function runSplash(){
 }
 // He starts to turn, then whips round faster than the eye can follow: the frame smears into motion blur,
 // streaks tear across the dark, and a bright edge wipes the screen in the direction he turned, uncovering the Log.
-function skWhip(v, clip){
- // 1) WARP: he has started to turn; the rest of the turn happens at super-speed under a heavy motion blur.
- // 2) SWEEP: the turn is done, time drops back to normal, and his arm sweeps the black away to reveal the Log.
- // The live video stays on screen throughout (no canvas copy of it, which iOS can render black).
- const dir = clip.dir || -1, sp = document.getElementById("splash"), c = document.getElementById("skSmoke");
- const dpr = Math.min(2, devicePixelRatio||1), W = innerWidth, H = innerHeight;
- c.width = Math.round(W*dpr); c.height = Math.round(H*dpr); const X = c.getContext("2d"); X.setTransform(dpr,0,0,dpr,0,0);
- const dur = v.duration || 4.04, turnDone = dur - (clip.turnEnd || .6), v0 = v.currentTime;
- sp.classList.add("whip");
- const T0 = performance.now(), WARP_MAX = 600, WIPE = 950;
- let phase = 1, T1 = 0;
- const streaks = []; for(let i=0;i<30;i++) streaks.push({y:Math.random()*H, l:W*(.3+Math.random()*.7), w:.5+Math.random()*2.2, s:.8+Math.random()*1.2, o:Math.random(), a:.15+Math.random()*.4});
- const easeIO = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
- const clipTo = val => { sp.style.clipPath = val; sp.style.webkitClipPath = val; };
- const frame = now => {
-  if(splashDone) return;
-  X.clearRect(0,0,W,H);
-  if(phase === 1){
-   // progress through the turn, by the video's own clock (falls back to wall time if the video stalls)
-   const kv = Math.max(0, Math.min(1, (v.currentTime - v0) / Math.max(.05, turnDone - v0))), kt = (now - T0) / WARP_MAX, k = Math.max(kv, Math.min(1, kt));
-   const w = Math.sin(Math.PI * Math.min(1, k)), wp = Math.pow(w, .7);       // blur swells in, peaks mid-turn, resolves as he lands the turn
-   v.style.filter = "blur(" + (wp*18).toFixed(1) + "px) brightness(" + (1 + wp*.35).toFixed(2) + ") contrast(" + (1 + wp*.15).toFixed(2) + ")";
-   v.style.transform = "translateX(" + (dir*W*.05*wp).toFixed(1) + "px) scaleX(" + (1 + .18*wp).toFixed(3) + ") scale(" + (1 + .03*wp).toFixed(3) + ")";
-   X.globalCompositeOperation = "lighter";
-   for(const s of streaks){ const p = ((s.o + (now-T0)/1000*s.s*4*dir) % 1 + 1) % 1, x = dir>0 ? -s.l + p*(W+s.l*2) : W + s.l - p*(W+s.l*2), a = s.a*wp;
-    if(a < .01) continue; const g = X.createLinearGradient(x, 0, x + dir*s.l, 0); g.addColorStop(0,"rgba(255,235,200,0)"); g.addColorStop(.7,"rgba(255,235,200,"+a+")"); g.addColorStop(1,"rgba(255,255,255,0)");
-    X.fillStyle = g; X.fillRect(Math.min(x, x+dir*s.l), s.y, s.l, s.w); }
-   X.globalCompositeOperation = "source-over";
-   if(k >= 1){ v.style.filter = ""; v.style.transform = ""; X.clearRect(0,0,W,H); sp.classList.remove("whip"); skDispel(v, clip.smokeDir || 1); return; }   // turn landed: his sweep dispels the darkness as smoke, like before
-  } else {
-   // his arm sweeps out toward screen-left: the darkness is dragged away in the same direction, the edge riding his hand
-   const kp = Math.min(1, (now - T1) / WIPE), e = easeIO(kp);
-   const front = dir>0 ? -W*.05 + W*1.15*e : W*1.05 - W*1.15*e, f = Math.max(0, Math.min(W, front));
-   clipTo(dir>0 ? "inset(0 0 0 " + f.toFixed(1) + "px)" : "inset(0 " + (W-f).toFixed(1) + "px 0 0)");
-   const gw = W*.14, eg = X.createLinearGradient(front, 0, front + dir*gw, 0);
-   X.globalCompositeOperation = "lighter";
-   eg.addColorStop(0,"rgba(255,250,235,"+(.9*(1-kp*.35))+")"); eg.addColorStop(.15,"rgba(255,205,130,"+(.55*(1-kp*.4))+")"); eg.addColorStop(1,"rgba(255,170,80,0)");
-   X.fillStyle = eg; X.fillRect(Math.min(front, front+dir*gw), 0, gw, H);
-   // a few embers shed off the edge
-   for(let i=0;i<5;i++){ const yy = (Math.sin(now/90 + i*7.3)*.5+.5)*H, xx = front + dir*(10 + ((now/4 + i*53) % (gw*1.2))); X.fillStyle = "rgba(255,215,150,"+(.5*(1-kp))+")"; X.fillRect(xx, yy, 2, 2); }
-   X.globalCompositeOperation = "source-over";
-   if(kp >= 1){ endSplash(); return; }
-  }
-  skRAF = requestAnimationFrame(frame);
- };
- skRAF = requestAnimationFrame(frame);
-}
+function skWhip(v, clip){ skDispel(v, clip.smokeDir || 1); }   // the warp itself lives in the video file
 // The darkness breaks apart like smoke in the wake of his hand, uncovering the Log underneath.
 function skDispel(v, dir){
  const sp = document.getElementById("splash"), c = document.getElementById("skSmoke");
