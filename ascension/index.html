@@ -1774,7 +1774,7 @@ function bkEmbers(){
 // Each clip: src, and dir = which way his sweep travels across the screen (1 = left to right, -1 = right to left).
 // The speed-up is baked into the clip file itself (turn sped up, arm sweep slowed), so nothing depends on playbackRate or seeking, which iOS handles unreliably. sweepAt = seconds before the end where the blur starts (just as he begins to turn); turnEnd = seconds before the end where he has his back to us and the arm sweep (and the wipe) begins. dir = the way his hand sweeps (-1 = toward screen-left). Add more moods here and one is picked at random.
 const SK_CLIPS = [
- {id:"cocky", src:"intro/skullius_whip.mp4", dir:-1, smokeDir:1, sweepAt:1.06, turnEnd:.68}
+ {id:"cocky", src:"intro/skullius_whip.mp4", dir:-1, smokeDir:1, sweepAt:.725, turnEnd:.385}
 ];
 let skRAF = 0;
 function skPick(){
@@ -1893,7 +1893,7 @@ function skDispel(v, dir){
  const m = document.createElement("canvas"); m.width = c.width; m.height = c.height; const M = m.getContext("2d"); M.scale(dpr,dpr);
  // where the video actually sits on screen (object-fit: contain)
  const vw = v.videoWidth||716, vh = v.videoHeight||1284, sc = Math.min(W/vw, H/vh), dw = vw*sc, dh = vh*sc, dx = (W-dw)/2, dy = (H-dh)*.42;
- sp.classList.add("revealing");
+ let shown = false;   // the live video is only hidden once the canvas has painted its first frame over it, so there is never a blank frame
  const T0 = performance.now(), DUR = 1750;
  const holes = [], wisps = [];
  const ease = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
@@ -1922,6 +1922,7 @@ function skDispel(v, dir){
   X.fillStyle = "#000"; X.fillRect(0,0,W,H);
   try{ X.drawImage(v, dx, dy, dw, dh); }catch(e){}
   X.globalCompositeOperation = "destination-out"; X.drawImage(m, 0, 0, W, H);
+  if(!shown){ shown = true; sp.classList.add("revealing"); }
   // smoke curling off the torn edge
   X.globalCompositeOperation = "source-over";
   for(let i=wisps.length-1;i>=0;i--){ const w = wisps[i], a = (now-w.t)/w.life; if(a>=1){ wisps.splice(i,1); continue; }
