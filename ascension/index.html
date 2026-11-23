@@ -1774,7 +1774,7 @@ function bkEmbers(){
 // Each clip: src, and dir = which way his sweep travels across the screen (1 = left to right, -1 = right to left).
 // sweepAt = seconds before the clip ends where the warp kicks in (he has just begun to turn); turnEnd = seconds before the end where the turn is done and his arm sweep begins, which drives the wipe. dir = the way his hand sweeps (-1 = toward screen-left). Add more moods here and one is picked at random.
 const SK_CLIPS = [
- {id:"cocky", src:"intro/skullius_cocky.mp4", dir:-1, sweepAt:1.12, turnEnd:.6}
+ {id:"cocky", src:"intro/skullius_cocky.mp4", dir:-1, sweepAt:1.1, turnEnd:.46}
 ];
 let skRAF = 0;
 function skPick(){
@@ -1847,8 +1847,8 @@ function skWhip(v, clip){
  c.width = Math.round(W*dpr); c.height = Math.round(H*dpr); const X = c.getContext("2d"); X.setTransform(dpr,0,0,dpr,0,0);
  const dur = v.duration || 4.04, turnDone = dur - (clip.turnEnd || .6), v0 = v.currentTime;
  sp.classList.add("whip");
- try{ v.playbackRate = 3.4; }catch(e){}
- const T0 = performance.now(), WARP_MAX = 520, WIPE = 900;
+ try{ v.playbackRate = 4; }catch(e){}
+ const T0 = performance.now(), WARP_MAX = 380, WIPE = 950;
  let phase = 1, T1 = 0;
  const streaks = []; for(let i=0;i<30;i++) streaks.push({y:Math.random()*H, l:W*(.3+Math.random()*.7), w:.5+Math.random()*2.2, s:.8+Math.random()*1.2, o:Math.random(), a:.15+Math.random()*.4});
  const easeIO = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
@@ -1867,7 +1867,7 @@ function skWhip(v, clip){
     if(a < .01) continue; const g = X.createLinearGradient(x, 0, x + dir*s.l, 0); g.addColorStop(0,"rgba(255,235,200,0)"); g.addColorStop(.7,"rgba(255,235,200,"+a+")"); g.addColorStop(1,"rgba(255,255,255,0)");
     X.fillStyle = g; X.fillRect(Math.min(x, x+dir*s.l), s.y, s.l, s.w); }
    X.globalCompositeOperation = "source-over";
-   if(k >= 1){ phase = 2; T1 = now; v.style.filter = ""; v.style.transform = ""; try{ v.playbackRate = .85; }catch(e){} }
+   if(k >= 1){ phase = 2; T1 = now; v.style.filter = ""; v.style.transform = ""; try{ v.playbackRate = .6; }catch(e){} }
   } else {
    // his arm sweeps out toward screen-left: the darkness is dragged away in the same direction, the edge riding his hand
    const kp = Math.min(1, (now - T1) / WIPE), e = easeIO(kp);
