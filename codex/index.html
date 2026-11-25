@@ -890,7 +890,7 @@ main :is(h1,h2,h3,.h2,.h3,b,.spot b,.dcard b,.mcard b,.d-hello h2){color:color-m
       <span class="pip" id="pip" hidden>1</span>
     </button>
     <div class="title">
-      <h1 id="codexTitle">Blank Codex</h1>
+      <h1 id="codexTitle">Arjuun Codex</h1>
       <div class="sub" id="codexSub">0 folios bound</div>
       <div class="sub2" id="codexSub2"></div>
     </div>
@@ -1592,8 +1592,8 @@ function labelOf(l){
 // ================= render: header =================
 function renderHeader(){
  const n = folios().length, ct = codexTitle(n), stg = codexStage(n), nx = CODEX_TITLES[stg+1];
- document.getElementById("codexTitle").textContent = ct[1];
- document.getElementById("codexSub").textContent = n+" folio"+(n===1?"":"s")+" bound"+(nx?" · "+(nx[0]-n)+" to "+nx[1].replace(" Codex",""):"");
+ document.getElementById("codexTitle").textContent = "Arjuun Codex";   // fixed name; the rank (Blank, Scrawled, Inked...) rides in the line below
+ document.getElementById("codexSub").textContent = ct[1].replace(" Codex","")+" · "+n+" folio"+(n===1?"":"s")+(nx?" · "+(nx[0]-n)+" to "+nx[1].replace(" Codex",""):"");
  const ms = moonstones(); document.getElementById("codexSub2").textContent = ms+" moon"+(ms===1?"":"s")+" earned";
  const ws = weekStart(today()), ss = seals(ws), met = ss.filter(x=>x.met).length, ecl = !!S.eclipse[ws];
  document.getElementById("moonSvg").innerHTML = ecl ? '<circle cx="23" cy="23" r="19" fill="var(--ink)" stroke="var(--verm)" stroke-width="2"/>' : moonSVG(met/6);
