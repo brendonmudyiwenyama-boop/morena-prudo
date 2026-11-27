@@ -1162,6 +1162,11 @@ html::before,html::after{inset:0 0 auto 0;height:100vh;height:100lvh;transform:t
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .sync{font-size:11px;color:var(--muted)}
 details summary{cursor:pointer;font-weight:600}
+
+/* ===== Huginn & Muninn: raven-motion.js moves the rig now (springs and smooth curves, no keyframe snaps) ===== */
+.rv[data-rm],.rv[data-rm]>.lyr,.rv[data-rm] .lyr>.act,.rv[data-rm] .jaw{animation:none!important}
+.rv[data-rm] .lyr>.act,.rv[data-rm] .jaw{will-change:transform;backface-visibility:hidden}
+.fthr{transform-style:preserve-3d}
 </style>
 
 <div class="splash sk-splash" id="splash" role="button" aria-label="Opening Ascension Log. Tap to skip.">
@@ -2312,25 +2317,25 @@ const RIG = {
  h:{head:"--px:35.6%;--py:104.3%", wing:"--px:87%;--py:4%", jaw:"left:55.36%;top:43.27%;width:43.35%;height:26.92%;--jx:2%;--jy:60.7%", eye:"left:44.6%;top:33.7%;width:6.44%", feet:"30% 76%"},
  m:{head:"--px:58.5%;--py:106%", wing:"--px:9.8%;--py:4.1%", jaw:"left:0.42%;top:50%;width:43.75%;height:26%;--jx:94.3%;--jy:53.8%", eye:"left:52.6%;top:37%;width:6.25%", feet:"66% 78%"}
 };
-const msk = f => 'style="-webkit-mask-image:url(raven/rv2/'+f+'.webp);mask-image:url(raven/rv2/'+f+'.webp)"';
+const msk = f => 'style="-webkit-mask-image:url(raven/rv3/'+f+'.webp);mask-image:url(raven/rv3/'+f+'.webp)"';
 function raven(k){
  const r = RIG[k];
  return '<div class="rv '+k+'" data-rv="'+k+'" style="transform-origin:'+r.feet+'">'+
-  '<i class="aura" style="-webkit-mask-image:url(raven/rv2/'+k+'_sil.webp);mask-image:url(raven/rv2/'+k+'_sil.webp)"><b></b></i>'+
-  '<div class="lyr body" style="'+RAV[k+"_body"]+'"><div class="act"><img src="raven/rv2/'+k+'_body.webp" alt="" draggable="false"><i class="sheen" '+msk(k+"_body")+'></i></div></div>'+
-  '<div class="lyr wing" style="'+RAV[k+"_wing"]+';'+r.wing+'"><div class="act"><img src="raven/rv2/'+k+'_wing.webp" alt="" draggable="false"><i class="sheen" '+msk(k+"_wing")+'></i></div></div>'+
-  '<div class="lyr head" style="'+RAV[k+"_head"]+';'+r.head+'"><div class="act"><img src="raven/rv2/'+k+'_head.webp" alt="" draggable="false"><i class="sheen" '+msk(k+"_head")+'></i>'+
-   '<div class="jaw" style="'+r.jaw+'"><img src="raven/rv2/'+k+'_jaw.webp" alt="" draggable="false"></div>'+
+  '<i class="aura" style="-webkit-mask-image:url(raven/rv3/'+k+'_sil.webp);mask-image:url(raven/rv3/'+k+'_sil.webp)"><b></b></i>'+
+  '<div class="lyr body" style="'+RAV[k+"_body"]+'"><div class="act"><img src="raven/rv3/'+k+'_body.webp" alt="" draggable="false"><i class="sheen" '+msk(k+"_body")+'></i></div></div>'+
+  '<div class="lyr wing" style="'+RAV[k+"_wing"]+';'+r.wing+'"><div class="act"><img src="raven/rv3/'+k+'_wing.webp" alt="" draggable="false"><i class="sheen" '+msk(k+"_wing")+'></i></div></div>'+
+  '<div class="lyr head" style="'+RAV[k+"_head"]+';'+r.head+'"><div class="act"><img src="raven/rv3/'+k+'_head.webp" alt="" draggable="false"><i class="sheen" '+msk(k+"_head")+'></i>'+
+   '<div class="jaw" style="'+r.jaw+'"><img src="raven/rv3/'+k+'_jaw.webp" alt="" draggable="false"></div>'+
    '<span class="eye" style="'+r.eye+'"><b class="halo"></b><b class="glow"></b><b class="iris"></b><b class="flare"></b><b class="glint"></b><b class="lid"></b></span></div></div>'+
   '<span class="caw">'+(k==="h"?"Kraa!":"Krrok.")+'</span><i class="motes"><b></b><b></b><b></b><b></b><b></b><b></b></i></div>';
 }
 // one persistent perch, moved into each fresh render so the birds never restart mid-breath
 let PERCH = null;
-function perchEl(){ if(PERCH) return PERCH; const w = document.createElement("div"); w.innerHTML = '<div class="perch" id="pCx" aria-hidden="true"><img src="raven/rv2/base.webp" alt="" draggable="false" style="position:absolute;'+RAV.base+'">'+raven("h")+raven("m")+'<div class="say h" data-say="h"></div><div class="say m" data-say="m"></div></div>'; PERCH = w.firstChild; return PERCH; }
+function perchEl(){ if(PERCH) return PERCH; const w = document.createElement("div"); w.innerHTML = '<div class="perch" id="pCx" aria-hidden="true"><img src="raven/rv3/base.webp" alt="" draggable="false" style="position:absolute;'+RAV.base+'">'+raven("h")+raven("m")+'<div class="say h" data-say="h"></div><div class="say m" data-say="m"></div></div>'; PERCH = w.firstChild; return PERCH; }
 function mountPerch(){ const slot = document.getElementById("cxSlot"); if(slot && PERCH && slot.firstChild!==PERCH) slot.appendChild(PERCH); else if(slot && !PERCH) slot.appendChild(perchEl()); }
 const birdEls = w => PERCH ? PERCH.querySelectorAll('.rv.'+w) : [];
 const BUSY = {h:0,m:0}; const rbusy = w => Date.now() < BUSY[w];
-function act(w, cls, ms){ BUSY[w] = Date.now()+ms; birdEls(w).forEach(b => { b.classList.remove(cls); void b.offsetWidth; b.classList.add(cls); clearTimeout(b["_"+cls]); b["_"+cls] = setTimeout(()=>b.classList.remove(cls), ms); }); }
+function act(w, cls, ms){ if(window.RavenMotion) RavenMotion.trigger(w, cls, ms); BUSY[w] = Date.now()+ms; birdEls(w).forEach(b => { b.classList.remove(cls); void b.offsetWidth; b.classList.add(cls); clearTimeout(b["_"+cls]); b["_"+cls] = setTimeout(()=>b.classList.remove(cls), ms); }); }
 function blinkLoop(w){ const go = () => { birdEls(w).forEach(b=>{ b.classList.add("blink"); setTimeout(()=>b.classList.remove("blink"),150); }); if(Math.random()<.25) setTimeout(()=>birdEls(w).forEach(b=>{ b.classList.add("blink"); setTimeout(()=>b.classList.remove("blink"),150); }),300); setTimeout(go, 2400 + Math.random()*4600); }; setTimeout(go, 800 + Math.random()*2000); }
 const perchOnScreen = () => { if(!PERCH || tab!=="today" || !PERCH.isConnected) return false; const r = PERCH.getBoundingClientRect(); return r.bottom > 70 && r.top < innerHeight - 80; };
 let feathersLive = 0;
@@ -2341,14 +2346,7 @@ function spawnFeather(w){
  el.style.width = (12 + Math.random()*10)+"px"; el.innerHTML = '<img src="raven/feather'+(1+Math.floor(Math.random()*5))+'.webp" alt="">';
  document.body.appendChild(el); feathersLive++;
  const x0 = r.left + (w==="m" ? r.width*(.58+Math.random()*.28) : r.width*(.14+Math.random()*.28)), y0 = r.top + r.height*(.3+Math.random()*.25);
- const vy = 28 + Math.random()*16, A = 18 + Math.random()*16, om = 1.5 + Math.random()*1.2, ph = Math.random()*6.28, rot0 = -30 + Math.random()*60;
- const fall = 220 + Math.random()*160, life = fall/vy*1000, t0 = performance.now();
- const step = now => { const t = (now - t0)/1000, k = t*1000/life; if(k >= 1){ el.remove(); feathersLive--; return; }
-  const drag = 1 - .25*k, x = x0 + A*Math.sin(om*t + ph)*drag + t*6, y = y0 + vy*t + 4*Math.sin(om*2*t + ph);
-  el.style.opacity = Math.max(0, Math.min(1, t/.35, (1-k)/.18)).toFixed(3);
-  el.style.transform = "translate3d("+x.toFixed(1)+"px,"+y.toFixed(1)+"px,0) rotate("+(rot0 + 32*Math.cos(om*t + ph)).toFixed(1)+"deg) scaleX("+(.55 + .45*Math.abs(Math.cos(om*.6*t + ph))).toFixed(3)+")";
-  requestAnimationFrame(step); };
- requestAnimationFrame(step);
+ if(window.RavenMotion) RavenMotion.fall(el, x0, y0, {done(){ feathersLive--; }}); else { el.remove(); feathersLive--; }
 }
 function ravenLines(w){
  const out = [], age = cxIn&&cxIn.at ? (Date.now()-new Date(cxIn.at))/36e5 : null, fresh = age!=null && age<72;
@@ -2806,4 +2804,5 @@ window.rvAct = (w, cls, ms) => { if(typeof act === "function") act(w, cls, ms ||
 })();
 </script>
 
+<script src="raven-motion.js?v=202611270900"></script>
 </body></html>

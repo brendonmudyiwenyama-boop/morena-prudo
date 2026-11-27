@@ -950,6 +950,11 @@ main :is(h1,h2,h3,.h2,.h3,b,.spot b,.dcard b,.mcard b,.d-hello h2){color:color-m
 .rv.h .hic{left:46%} .rv.m .hic{right:46%}
 @keyframes hicUp{0%{opacity:0;transform:translateY(6px) scale(.7) rotate(-6deg)}20%{opacity:1;transform:translateY(0) scale(1.05) rotate(4deg)}100%{opacity:0;transform:translateY(-22px) scale(.9) rotate(-3deg)}}
 @media (prefers-reduced-motion:reduce){.vsl canvas,.vsl .vap b,.vsl .vap i,.mead-drink{animation:none}.mdrop{display:none}}
+
+/* ===== Huginn & Muninn: raven-motion.js moves the rig now (springs and smooth curves, no keyframe snaps) ===== */
+.rv[data-rm],.rv[data-rm]>.lyr,.rv[data-rm] .lyr>.act,.rv[data-rm] .jaw{animation:none!important}
+.rv[data-rm] .lyr>.act,.rv[data-rm] .jaw{will-change:transform;backface-visibility:hidden}
+.fthr{transform-style:preserve-3d}
 </style>
 </head>
 <body>
@@ -1325,19 +1330,19 @@ const RIG = {
  h:{head:"--px:35.6%;--py:104.3%", wing:"--px:87%;--py:4%", jaw:"left:55.36%;top:43.27%;width:43.35%;height:26.92%;--jx:2%;--jy:60.7%", eye:"left:44.6%;top:33.7%;width:6.44%", feet:"30% 76%"},
  m:{head:"--px:58.5%;--py:106%", wing:"--px:9.8%;--py:4.1%", jaw:"left:0.42%;top:50%;width:43.75%;height:26%;--jx:94.3%;--jy:53.8%", eye:"left:52.6%;top:37%;width:6.25%", feet:"66% 78%"}
 };
-const msk = f => 'style="-webkit-mask-image:url(art/rv2/'+f+'.webp);mask-image:url(art/rv2/'+f+'.webp)"';
+const msk = f => 'style="-webkit-mask-image:url(art/rv3/'+f+'.webp);mask-image:url(art/rv3/'+f+'.webp)"';
 function raven(k){
  const r = RIG[k];
  return '<div class="rv '+k+'" data-rv="'+k+'" style="transform-origin:'+r.feet+'">'+
-  '<i class="aura" style="-webkit-mask-image:url(art/rv2/'+k+'_sil.webp);mask-image:url(art/rv2/'+k+'_sil.webp)"><b></b></i>'+
-  '<div class="lyr body" style="'+RAV[k+"_body"]+'"><div class="act"><img src="art/rv2/'+k+'_body.webp" alt="" draggable="false"><i class="sheen" '+msk(k+"_body")+'></i></div></div>'+
-  '<div class="lyr wing" style="'+RAV[k+"_wing"]+';'+r.wing+'"><div class="act"><img src="art/rv2/'+k+'_wing.webp" alt="" draggable="false"><i class="sheen" '+msk(k+"_wing")+'></i></div></div>'+
-  '<div class="lyr head" style="'+RAV[k+"_head"]+';'+r.head+'"><div class="act"><img src="art/rv2/'+k+'_head.webp" alt="" draggable="false"><i class="sheen" '+msk(k+"_head")+'></i>'+
-   '<div class="jaw" style="'+r.jaw+'"><img src="art/rv2/'+k+'_jaw.webp" alt="" draggable="false"></div>'+
+  '<i class="aura" style="-webkit-mask-image:url(art/rv3/'+k+'_sil.webp);mask-image:url(art/rv3/'+k+'_sil.webp)"><b></b></i>'+
+  '<div class="lyr body" style="'+RAV[k+"_body"]+'"><div class="act"><img src="art/rv3/'+k+'_body.webp" alt="" draggable="false"><i class="sheen" '+msk(k+"_body")+'></i></div></div>'+
+  '<div class="lyr wing" style="'+RAV[k+"_wing"]+';'+r.wing+'"><div class="act"><img src="art/rv3/'+k+'_wing.webp" alt="" draggable="false"><i class="sheen" '+msk(k+"_wing")+'></i></div></div>'+
+  '<div class="lyr head" style="'+RAV[k+"_head"]+';'+r.head+'"><div class="act"><img src="art/rv3/'+k+'_head.webp" alt="" draggable="false"><i class="sheen" '+msk(k+"_head")+'></i>'+
+   '<div class="jaw" style="'+r.jaw+'"><img src="art/rv3/'+k+'_jaw.webp" alt="" draggable="false"></div>'+
    '<span class="eye" style="'+r.eye+'"><b class="halo"></b><b class="glow"></b><b class="iris"></b><b class="flare"></b><b class="glint"></b><b class="lid"></b></span></div></div>'+
   '<span class="caw">'+(k==="h"?"Kraa!":"Krrok.")+'</span><i class="motes"><b></b><b></b><b></b><b></b><b></b><b></b></i></div>';
 }
-function perchHTML(id){ return '<div class="perch" id="'+id+'" aria-hidden="true"><img src="art/rv2/base.webp" alt="" draggable="false" style="position:absolute;'+RAV.base+'">'+raven("h")+raven("m")+
+function perchHTML(id){ return '<div class="perch" id="'+id+'" aria-hidden="true"><img src="art/rv3/base.webp" alt="" draggable="false" style="position:absolute;'+RAV.base+'">'+raven("h")+raven("m")+
  (id==="pHero"?'<div class="say h" data-say="h"></div><div class="say m" data-say="m"></div>':'')+'</div>'; }
 function ravenPath(){ return ""; }
 let shownStage = null;
@@ -1348,7 +1353,7 @@ function drawRavens(stage){
 function birdEls(w){ return document.querySelectorAll('.perch .rv.'+w); }
 const BUSY = {h:0,m:0};
 const busy = w => Date.now() < BUSY[w];
-function act(w, cls, ms){ BUSY[w] = Date.now()+ms; birdEls(w).forEach(b => { b.classList.remove(cls); void b.offsetWidth; b.classList.add(cls); clearTimeout(b["_"+cls]); b["_"+cls] = setTimeout(()=>b.classList.remove(cls), ms); }); }
+function act(w, cls, ms){ if(window.RavenMotion) RavenMotion.trigger(w, cls, ms); BUSY[w] = Date.now()+ms; birdEls(w).forEach(b => { b.classList.remove(cls); void b.offsetWidth; b.classList.add(cls); clearTimeout(b["_"+cls]); b["_"+cls] = setTimeout(()=>b.classList.remove(cls), ms); }); }
 function act2(w, cls, ms){ birdEls(w).forEach(b => { b.classList.add(cls); setTimeout(()=>b.classList.remove(cls), ms); }); }
 function blinkLoop(w){
  const go = () => { act2(w,"blink",150); if(Math.random()<.25) setTimeout(()=>act2(w,"blink",150),300); setTimeout(go, 2400 + Math.random()*4600); };
@@ -1370,19 +1375,7 @@ function spawnFeather(w){
  const tgt = Math.random() < .8 ? pinTarget() : null;
  if(tgt){ pinFeather(el, wpx, r, w, tgt); return; }
  const x0 = r.left + (w==="m" ? r.width*(.58+Math.random()*.28) : r.width*(.14+Math.random()*.28)), y0 = r.top + r.height*(.3+Math.random()*.25);
- const vy = (big?32:22) + Math.random()*16, A = (big?22:12) + Math.random()*16, om = 1.5 + Math.random()*1.2, ph = Math.random()*6.28, rot0 = -30 + Math.random()*60;
- const fall = (big?260:200) + Math.random()*160, life = fall/vy*1000, t0 = performance.now();
- const step = now => {
-  const t = (now - t0)/1000, k = t*1000/life;
-  if(k >= 1){ el.remove(); feathersLive--; return; }
-  const drag = 1 - .25*k;
-  const x = x0 + A*Math.sin(om*t + ph)*drag + t*6, y = y0 + vy*t + 4*Math.sin(om*2*t + ph);
-  const rot = rot0 + 32*Math.cos(om*t + ph), flip = .55 + .45*Math.abs(Math.cos(om*.6*t + ph));
-  el.style.opacity = Math.max(0, Math.min(1, t/.35, (1-k)/.18)).toFixed(3);
-  el.style.transform = "translate3d("+x.toFixed(1)+"px,"+y.toFixed(1)+"px,0) rotate("+rot.toFixed(1)+"deg) scaleX("+flip.toFixed(3)+")";
-  requestAnimationFrame(step);
- };
- requestAnimationFrame(step);
+ if(window.RavenMotion) RavenMotion.fall(el, x0, y0, {big, dist:(big?260:200) + Math.random()*160, done(){ feathersLive--; }}); else { el.remove(); feathersLive--; }
 }
 
 
@@ -1404,18 +1397,13 @@ function pinFeather(el, wpx, r, w, tgt){
  const pinRot = (Math.random()<.5?-1:1)*(8+Math.random()*16), A = 18 + Math.random()*14, om = 1.6 + Math.random()*1, ph = Math.random()*6.28;
  const Tf = 1500 + Math.random()*700, Td = 150, t0 = performance.now();
  const hx = tx - Math.sin(pinRot*Math.PI/180)*fh*.9, hy = ty - fh*.75;     // hover point just above the strike
- let pinned = false;
  const put = (x,y,rot,sxk) => { el.style.transform = "translate3d("+(x-wpx/2).toFixed(1)+"px,"+(y-fh).toFixed(1)+"px,0) rotate("+rot.toFixed(1)+"deg) scaleX("+(sxk||1).toFixed(3)+")"; };
- const step = now => {
-  const t = now - t0;
-  if(t < Tf){ const k = t/Tf, e = k*k*(3-2*k), dr = 1-k;
-   const x = x0 + (hx-x0)*e + A*Math.sin(om*t/1000 + ph)*dr, y = y0 + (hy-y0)*e + 4*Math.sin(om*2*t/1000 + ph);
-   el.style.opacity = Math.min(1, t/300).toFixed(3);
-   put(x, y, 28*Math.cos(om*t/1000+ph)*dr + pinRot*e, .6 + .4*Math.abs(Math.cos(om*.6*t/1000 + ph))*dr + .4*e*(1-dr)); return requestAnimationFrame(step); }
-  if(t < Tf+Td){ const k = (t-Tf)/Td, e = k*k*k; put(hx + (tx-hx)*e, hy + (ty-hy)*e, pinRot, 1); return requestAnimationFrame(step); }
-  if(!pinned){ pinned = true; pinThwack(el, tx, ty, pinRot, put, wpx); }
- };
- requestAnimationFrame(step);
+ const place = (x,y,rot,ry,sc) => { el.style.transform = "translate3d("+(x-wpx/2).toFixed(2)+"px,"+(y-fh).toFixed(2)+"px,0) rotate("+rot.toFixed(2)+"deg) perspective(240px) rotateY("+ry.toFixed(2)+"deg) scale("+sc.toFixed(3)+")"; };
+ // glide down on the same pendulum flutter as a free feather, steering onto a point just above the strike
+ const strike = () => { const t1 = performance.now();
+  const s2 = now => { const k = Math.min(1,(now-t1)/Td), e = k*k*k; put(hx + (tx-hx)*e, hy + (ty-hy)*e, pinRot, 1); if(k < 1) requestAnimationFrame(s2); else pinThwack(el, tx, ty, pinRot, put, wpx); };
+  requestAnimationFrame(s2); };
+ if(window.RavenMotion) RavenMotion.flutterTo(el, [x0,y0], [hx,hy], Tf, pinRot, place, strike); else strike();
 }
 function pinThwack(el, tx, ty, rot, put, wpx){
  // the quill bites: a slit in the parchment, a puff of fibre, a twang that settles
@@ -2363,7 +2351,7 @@ function whenLoaded(srcs, maxMs){
  try{ if(localStorage.getItem("codex-sp")===line) line = SPLASH[(SPLASH.indexOf(line)+1)%SPLASH.length]; localStorage.setItem("codex-sp",line); }catch(e){}
  p.textContent = line;
  const sp = document.getElementById("splash");
- whenLoaded(["art/gate_frame.webp","art/gate_left.webp","art/gate_right.webp","art/parch_tile.webp","art/rv2/base.webp","art/rv2/h_body.webp","art/rv2/m_body.webp","art/rv2/h_head.webp","art/rv2/m_head.webp","art/rv2/h_wing.webp","art/rv2/m_wing.webp","art/moon.webp"], 3500).then(()=>{
+ whenLoaded(["art/gate_frame.webp","art/gate_left.webp","art/gate_right.webp","art/parch_tile.webp","art/rv3/base.webp","art/rv3/h_body.webp","art/rv3/m_body.webp","art/rv3/h_head.webp","art/rv3/m_head.webp","art/rv3/h_wing.webp","art/rv3/m_wing.webp","art/moon.webp"], 3500).then(()=>{
   if(gateStage) return; gateStage = 1;
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
    sp.classList.add("ready");
@@ -2669,4 +2657,5 @@ window.rvAct = (w, cls, ms) => { if(typeof act === "function") act(w, cls, ms ||
 
 })();
 </script>
+<script src="raven-motion.js?v=202611270900"></script>
 </body></html>
